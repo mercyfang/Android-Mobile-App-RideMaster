@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "265900238994",
+    "firebase_url": "https://ridermaster-1c333.firebaseio.com",
+    "project_id": "ridermaster-1c333",
+    "storage_bucket": "ridermaster-1c333.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265900238994:android:58dc338be88279c9",
+        "android_client_info": {
+          "package_name": "edu.duke.compsci290.ridermaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265900238994-efm5qr3b37e7fvokcoraa5tk1him798j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.duke.compsci290.ridermaster",
+            "certificate_hash": "b4ebad8d1cdbcd787d73e08a6f5f519195546bdd"
+          }
+        },
+        {
+          "client_id": "265900238994-u0jol8obpqc5c6li860252m1miq5cg9v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_15ukUFWioSBensmKji2Ox2JnDqCUTwk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265900238994-u0jol8obpqc5c6li860252m1miq5cg9v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
