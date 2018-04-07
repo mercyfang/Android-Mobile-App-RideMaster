@@ -1,5 +1,6 @@
-package edu.duke.compsci290.ridermaster;
+package edu.duke.compsci290.ridermaster.Activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import edu.duke.compsci290.ridermaster.R;
 
 public class MainActivity extends AppCompatActivity {
     private Button mLogInButton;
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mLogInWithFacebookButton = this.findViewById(R.id.log_in_with_facebook_button);
         mEmailField = this.findViewById(R.id.email_field_edit_text);
         mPasswordField = this.findViewById(R.id.password_field_edit_text);
-        // TODO: conceal password field input.
+        // TODO: conceals password field input.
         mAuth = FirebaseAuth.getInstance();
 
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
             // TODO: updates UI if no user is signed in.
         } else {
             // TODO: updates UI if user is signed in.
+            Intent intent = new Intent(getApplicationContext(), RideRequestActivity.class);
+            getApplicationContext().startActivity(intent);
         }
     }
 }
