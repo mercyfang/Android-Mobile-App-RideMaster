@@ -30,6 +30,13 @@
             android:text="Date" />
 
         <TextView
+            android:id="@+id/choose_date_field_text_view"
+            android:clickable="true"
+            android:text="Choose a Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:id="@+id/start_time_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

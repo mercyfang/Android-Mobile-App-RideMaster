@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mLogInWithFacebookButton = this.findViewById(R.id.log_in_with_facebook_button);
         mEmailField = this.findViewById(R.id.email_field_edit_text);
         mPasswordField = this.findViewById(R.id.password_field_edit_text);
-        // TODO: conceals password field input.
+        // TODO: hides password field input.
         mAuth = FirebaseAuth.getInstance();
 
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Checks if user is signed in (non-null) and update UI accordingly.
+        // Checks if user is signed in (non-null) and updates UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
     }
