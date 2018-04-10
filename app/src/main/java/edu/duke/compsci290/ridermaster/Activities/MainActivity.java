@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mLogInWithFacebookButton;
     private EditText mEmailField;
     private EditText mPasswordField;
+    private TextView mForgotPasswordText;
 
     private FirebaseAuth mAuth;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         mLogInWithFacebookButton = this.findViewById(R.id.log_in_with_facebook_button);
         mEmailField = this.findViewById(R.id.email_field_edit_text);
         mPasswordField = this.findViewById(R.id.password_field_edit_text);
+        mForgotPasswordText = this.findViewById(R.id.forgot_password_text_view);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -51,6 +54,31 @@ public class MainActivity extends AppCompatActivity {
         mLogInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            }
+        });
+        mForgotPasswordText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String email = mEmailField.getText().toString();
+                if (email.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Please input a valid email address.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mAuth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(MainActivity.this,
+                                            "A reset password email is sent",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this,
+                                            "Failed to send reset password email.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
     }
