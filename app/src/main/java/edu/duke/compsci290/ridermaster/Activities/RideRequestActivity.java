@@ -1,6 +1,7 @@
 package edu.duke.compsci290.ridermaster.Activities;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +30,9 @@ public class RideRequestActivity extends AppCompatActivity {
 
     private Button mEnableGoogleMapButton;
     private Button mSubmitButton;
+    // Only for developer purpose.
+    // TODO: remove later.
+    private Button mSignOutButton;
 
     private Calendar mCalendar;
 
@@ -43,6 +49,8 @@ public class RideRequestActivity extends AppCompatActivity {
 
         mEnableGoogleMapButton = findViewById(R.id.google_map_location_button);
         mSubmitButton = findViewById(R.id.find_a_share_button);
+        // TODO: remove later.
+        mSignOutButton = findViewById(R.id.sign_out_button);
 
         // Creates DatePicker Dialog.
         mCalendar = Calendar.getInstance();
@@ -64,6 +72,15 @@ public class RideRequestActivity extends AppCompatActivity {
                         mCalendar.get(Calendar.YEAR),
                         mCalendar.get(Calendar.MONTH),
                         mCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        // TODO: remove later.
+        mSignOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         });
 

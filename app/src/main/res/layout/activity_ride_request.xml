@@ -83,6 +83,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Find a share"/>
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Out" />
     </android.support.v7.widget.LinearLayoutCompat>
 
 </android.support.constraint.ConstraintLayout>

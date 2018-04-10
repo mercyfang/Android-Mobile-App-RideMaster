@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mLogInWithFacebookButton = this.findViewById(R.id.log_in_with_facebook_button);
         mEmailField = this.findViewById(R.id.email_field_edit_text);
         mPasswordField = this.findViewById(R.id.password_field_edit_text);
-        // TODO: hides password field input.
+
         mAuth = FirebaseAuth.getInstance();
 
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
