@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RiderMaster</string>
+    <string name="matchResult">matchResult</string>
+    <string name="choose_a_date">Choose a Date</string>
 </resources>

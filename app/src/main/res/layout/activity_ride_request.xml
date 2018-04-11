@@ -32,7 +32,7 @@
         <TextView
             android:id="@+id/choose_date_field_text_view"
             android:clickable="true"
-            android:text="Choose a Date"
+            android:text="@string/choose_a_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

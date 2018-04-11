@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -18,9 +19,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import FirebaseDatabase.FindMatches;
+import FirebaseDatabase.User;
 import edu.duke.compsci290.ridermaster.R;
 
 public class RideRequestActivity extends AppCompatActivity {
+
+    private final String timePrompt = "Choose a time";
+    private final String locationPrompt = "Choose a location";
 
     private TextView mDatePicker;
 
@@ -75,6 +81,29 @@ public class RideRequestActivity extends AppCompatActivity {
             }
         });
 
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!verifyMatchInputs()) {
+                    Toast.makeText(RideRequestActivity.this, "Please fill out all information",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                User user = new User(FirebaseAuth.getInstance().getCurrentUser()) ;
+                ArrayList<User> users = FindMatches.findMatches(user);
+                if (users.isEmpty()) {
+                    Toast.makeText(RideRequestActivity.this,
+                            "No match is found. Maybe try different time slots, or try again later?",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
+                intent.putExtra(getApplicationContext().getString(R.string.matchResult), users);
+                startActivity(intent);
+            }
+        });
+
         // TODO: remove later.
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +140,8 @@ public class RideRequestActivity extends AppCompatActivity {
 
     private ArrayList<String> getTimeSpinnerElements() {
         ArrayList<String> times = new ArrayList<>();
-        times.add("Choose a time");
+        times.add(timePrompt);
+        // Time options starts from 00:00 to 23:50, 10 minutes apart.
         for (int hour = 0; hour < 24; hour++) {
             for (int minute = 0; minute <= 50; minute = minute + 10) {
                 String hourString = hour < 10
@@ -125,11 +155,22 @@ public class RideRequestActivity extends AppCompatActivity {
 
     private ArrayList<String> getLocationElements() {
         ArrayList<String> locations = new ArrayList<>();
-        locations.add("Choose a location");
+        locations.add(locationPrompt);
         locations.add("West Campus Bus Stop");
         locations.add("East Campus Bus Stop");
         // TODO: adds more locations.
 
         return locations;
+    }
+
+    private boolean verifyMatchInputs() {
+        // TODO: checks date is in the future.
+        if (mDatePicker.getText().toString().equals(R.string.choose_a_date)
+                || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
+                || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
+                || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)) {
+            return false;
+        }
+        return true;
     }
 }

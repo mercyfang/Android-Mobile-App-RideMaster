@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RideRequestActivity"></activity>
+        <activity android:name=".Activities.RideRequestActivity" />
+        <activity android:name=".Activities.MatchResultActivity"></activity>
     </application>
 
 </manifest>
