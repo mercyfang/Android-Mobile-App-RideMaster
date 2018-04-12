@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import FirebaseDatabase.FindMatches;
+import FirebaseDatabase.FirebaseDatabaseReaderWritter;
 import FirebaseDatabase.User;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -72,12 +73,15 @@ public class RideRequestActivity extends AppCompatActivity {
         mDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(
+                DatePickerDialog datePickerdialog =  new DatePickerDialog(
                         RideRequestActivity.this,
                         date,
                         mCalendar.get(Calendar.YEAR),
                         mCalendar.get(Calendar.MONTH),
-                        mCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                        mCalendar.get(Calendar.DAY_OF_MONTH));
+                // Disables past dates in date picker.
+                datePickerdialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerdialog.show();
             }
         });
 
@@ -89,7 +93,21 @@ public class RideRequestActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-                User user = new User(FirebaseAuth.getInstance().getCurrentUser()) ;
+                if (!verifyTime()) {
+                    Toast.makeText(RideRequestActivity.this,
+                            "Please make sure your end time is after your start time",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                User user = new User(FirebaseAuth.getInstance().getCurrentUser());
+                user.setRideInfo(mDatePicker.getText().toString(),
+                        mStartTimeSpinner.getSelectedItem().toString(),
+                        mEndTimeSpinner.getSelectedItem().toString(),
+                        mLocationSpinner.getSelectedItem().toString());
+                // Writes user information into database.
+                FirebaseDatabaseReaderWritter.writeRideRequestData(user);
+
                 ArrayList<User> users = FindMatches.findMatches(user);
                 if (users.isEmpty()) {
                     Toast.makeText(RideRequestActivity.this,
@@ -164,11 +182,19 @@ public class RideRequestActivity extends AppCompatActivity {
     }
 
     private boolean verifyMatchInputs() {
-        // TODO: checks date is in the future.
         if (mDatePicker.getText().toString().equals(R.string.choose_a_date)
                 || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)) {
+            return false;
+        }
+        return true;
+    }
+
+    // Verifies user input end time is the same as, or after start time.
+    private boolean verifyTime() {
+        if (mEndTimeSpinner.getSelectedItem().toString().compareTo(
+                mStartTimeSpinner.getSelectedItem().toString()) < 0) {
             return false;
         }
         return true;

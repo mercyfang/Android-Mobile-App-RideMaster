@@ -146,12 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     *
-     * @param email user input.
-     * @param password user input.
-     * @return whether email and password formats are acceptable.
-     */
+    // Verifies email and password format.
     private boolean validateForm(String email, String password) {
         if (email.isEmpty() || !email.contains("@")) {
             return false;
@@ -160,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
         if (password.isEmpty()) {
             return false;
         }
-
         return true;
     }
 
@@ -168,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {
             // TODO: updates UI if no user is signed in.
         } else {
-            // TODO: updates UI if user is signed in.
             Intent intent = new Intent(getApplicationContext(), RideRequestActivity.class);
             getApplicationContext().startActivity(intent);
         }

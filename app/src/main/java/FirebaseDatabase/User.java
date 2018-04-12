@@ -11,7 +11,10 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public final class User {
     private String uId;
     private String email;
-    // TODO: date, time, location fields.
+    private String date;
+    private String startTime;
+    private String endTime;
+    private String location;
 
     // Default constructor required for calls to DataSnapshot.getValue(User.class).
     public User() {
@@ -20,5 +23,12 @@ public final class User {
     public User(FirebaseUser user) {
         this.uId = user.getUid();
         this.email = user.getEmail();
+    }
+
+    public void setRideInfo(String date, String startTime, String endTime, String location) {
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location;
     }
 }

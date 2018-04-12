@@ -7,7 +7,8 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class FirebaseDatabaseReaderWritter {
-    public void writeRideRequestData() {
+
+    public static void writeRideRequestData(User user) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         // TODO: writes data.
     }
