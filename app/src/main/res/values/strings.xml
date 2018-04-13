@@ -2,4 +2,6 @@
     <string name="app_name">RiderMaster</string>
     <string name="matchResult">matchResult</string>
     <string name="choose_a_date">Choose a Date</string>
+    <string name="facebook_app_id">324329631427685</string>
+    <string name="fb_login_protocol_scheme">fb324329631427685</string>
 </resources>
