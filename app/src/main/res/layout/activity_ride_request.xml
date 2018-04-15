@@ -1,94 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ride_request_navigation_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.duke.compsci290.ridermaster.Activities.RideRequestActivity">
+    android:fitsSystemWindows="true">
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <include
+        layout="@layout/activity_ride_request_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </include>
+
+    <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/activity_ride_request_drawer"
+        app:headerLayout="@layout/activity_ride_request_header" />
 
-        <TextView
-            android:id="@+id/time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Time"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/date_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date" />
-
-        <TextView
-            android:id="@+id/choose_date_field_text_view"
-            android:clickable="true"
-            android:text="@string/choose_a_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/start_time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="After" />
-
-        <Spinner
-            android:id="@+id/start_time_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/end_time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Before" />
-
-        <Spinner
-            android:id="@+id/end_time_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/location_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Location"
-            android:textSize="22sp" />
-
-        <Spinner
-            android:id="@+id/location_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/google_map_location_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Use Google Map to find my location" />
-
-        <Button
-            android:id="@+id/find_a_share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Find a share"/>
-
-        <Button
-            android:id="@+id/sign_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign Out" />
-    </android.support.v7.widget.LinearLayoutCompat>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.DrawerLayout>

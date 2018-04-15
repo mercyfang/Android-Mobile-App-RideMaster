@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RideRequestActivity" />
+        <activity android:name=".Activities.RideRequestActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".Activities.MatchResultActivity"></activity>
         <!--Facebook log in -->
         <meta-data android:name="com.facebook.sdk.ApplicationId"
