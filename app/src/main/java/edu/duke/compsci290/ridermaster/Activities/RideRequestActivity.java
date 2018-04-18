@@ -2,17 +2,12 @@ package edu.duke.compsci290.ridermaster.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,9 +24,7 @@ import FirebaseDatabase.FirebaseDatabaseReaderWritter;
 import FirebaseDatabase.User;
 import edu.duke.compsci290.ridermaster.R;
 
-public class RideRequestActivity extends AppCompatActivity {
-
-    private DrawerLayout mDrawerLayout;
+public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private final String timePrompt = "Choose a time";
     private final String locationPrompt = "Choose a location";
@@ -53,19 +46,12 @@ public class RideRequestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ride_request);
 
-        mDrawerLayout = findViewById(R.id.ride_request_navigation_drawer_layout);
-
-        // Sets up toolbar and its actions for navigation drawer.
-        Toolbar toolbar = findViewById(R.id.activity_ride_request_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        // Sets activity main view.
+        FrameLayout activityContainer = findViewById(R.id.activity_content);
+        View.inflate(this, R.layout.activity_ride_request, activityContainer);
 
         mDatePicker = findViewById(R.id.choose_date_field_text_view);
-
         mStartTimeSpinner = findViewById(R.id.start_time_spinner);
         mEndTimeSpinner = findViewById(R.id.end_time_spinner);
         mLocationSpinner = findViewById(R.id.location_spinner);
@@ -165,17 +151,6 @@ public class RideRequestActivity extends AppCompatActivity {
         mEndTimeSpinner.setSelection(0);
         mLocationSpinner.setAdapter(locationAdapter);
         mLocationSpinner.setSelection(0);
-    }
-
-    // Opens the drawer when button at ToolBar is tapped.
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void updateLabel() {
