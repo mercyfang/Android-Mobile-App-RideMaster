@@ -16,4 +16,6 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         FrameLayout activityContainer = findViewById(R.id.activity_content);
         View.inflate(this, R.layout.activity_match_result, activityContainer);
     }
+
+    // TODO: disables back button.
 }

@@ -15,6 +15,7 @@ public final class User {
     private String startTime;
     private String endTime;
     private String location;
+    private String destination;
 
     // Default constructor required for calls to DataSnapshot.getValue(User.class).
     public User() {
@@ -25,10 +26,12 @@ public final class User {
         this.email = user.getEmail();
     }
 
-    public void setRideInfo(String date, String startTime, String endTime, String location) {
+    public void setRideInfo(
+            String date, String startTime, String endTime, String location, String destination) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        this.destination = destination;
     }
 }

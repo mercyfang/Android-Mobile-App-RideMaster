@@ -34,8 +34,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private Spinner mStartTimeSpinner;
     private Spinner mEndTimeSpinner;
     private Spinner mLocationSpinner;
+    private Spinner mDestinationSpinner;
 
     private Button mEnableGoogleMapButton;
+    private Button mFindDestinationButton;
     private Button mSubmitButton;
     // Only for developer purpose.
     // TODO: remove later.
@@ -55,8 +57,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mStartTimeSpinner = findViewById(R.id.start_time_spinner);
         mEndTimeSpinner = findViewById(R.id.end_time_spinner);
         mLocationSpinner = findViewById(R.id.location_spinner);
+        mDestinationSpinner = findViewById(R.id.destination_spinner);
 
         mEnableGoogleMapButton = findViewById(R.id.google_map_location_button);
+        mFindDestinationButton = findViewById(R.id.find_destination_button);
         mSubmitButton = findViewById(R.id.find_a_share_button);
         // TODO: remove later.
         mSignOutButton = findViewById(R.id.sign_out_button);
@@ -106,7 +110,8 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 user.setRideInfo(mDatePicker.getText().toString(),
                         mStartTimeSpinner.getSelectedItem().toString(),
                         mEndTimeSpinner.getSelectedItem().toString(),
-                        mLocationSpinner.getSelectedItem().toString());
+                        mLocationSpinner.getSelectedItem().toString(),
+                        mDestinationSpinner.getSelectedItem().toString());
                 // Writes user information into database.
                 FirebaseDatabaseReaderWritter.writeRideRequestData(user);
 
@@ -136,6 +141,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
         ArrayList<String> times = getTimeSpinnerElements();
         ArrayList<String> locations = getLocationElements();
+        ArrayList<String> destinations = getDestinationElements();
 
         // Creates adapters for spinners.
         ArrayAdapter<String> timeAdapter =
@@ -144,6 +150,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         ArrayAdapter<String> locationAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, locations);
         locationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> destinationAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, destinations);
+        destinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mStartTimeSpinner.setAdapter(timeAdapter);
         mStartTimeSpinner.setSelection(0);
@@ -151,6 +160,13 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mEndTimeSpinner.setSelection(0);
         mLocationSpinner.setAdapter(locationAdapter);
         mLocationSpinner.setSelection(0);
+        mDestinationSpinner.setAdapter(destinationAdapter);
+        mDestinationSpinner.setSelection(0);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing. Disables back button.
     }
 
     private void updateLabel() {
@@ -184,11 +200,21 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         return locations;
     }
 
+    private ArrayList<String> getDestinationElements() {
+        ArrayList<String> destinations = new ArrayList<>();
+        destinations.add(locationPrompt);
+        destinations.add("RDU airport");
+        // TODO: adds more locations.
+
+        return destinations;
+    }
+
     private boolean verifyMatchInputs() {
         if (mDatePicker.getText().toString().equals(R.string.choose_a_date)
                 || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
-                || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)) {
+                || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)
+                || mDestinationSpinner.getSelectedItem().toString().equals(locationPrompt)) {
             return false;
         }
         return true;
