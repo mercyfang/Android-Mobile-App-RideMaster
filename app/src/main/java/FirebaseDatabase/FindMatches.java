@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class FindMatches {
-    public static ArrayList<User> findMatches(User user) {
+    public static ArrayList<User> findMatches(String uId, String requestId) {
         ArrayList<User> users = new ArrayList<>();
         // TODO: remove later.
         users.add(new User());

@@ -11,16 +11,15 @@ import java.util.ArrayList;
 
 @IgnoreExtraProperties
 public final class User {
-    private String uId;
-    private String email;
-    private ArrayList<String> requestIds;
+
+    public String email;
+    public ArrayList<String> requestIds;
 
     // Default constructor required for calls to DataSnapshot.getValue(User.class).
     public User() {
     }
 
     public User(FirebaseUser user) {
-        this.uId = user.getUid();
         this.email = user.getEmail();
         requestIds = new ArrayList<>();
     }

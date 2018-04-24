@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import FirebaseDatabase.FindMatches;
-import FirebaseDatabase.FirebaseDatabaseReaderWritter;
+import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+import FirebaseDatabase.Request;
 import FirebaseDatabase.User;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -106,16 +108,21 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                     return;
                 }
 
-                User user = new User(FirebaseAuth.getInstance().getCurrentUser());
-                user.setRideInfo(mDatePicker.getText().toString(),
-                        mStartTimeSpinner.getSelectedItem().toString(),
-                        mEndTimeSpinner.getSelectedItem().toString(),
-                        mLocationSpinner.getSelectedItem().toString(),
-                        mDestinationSpinner.getSelectedItem().toString());
-                // Writes user information into database.
-                FirebaseDatabaseReaderWritter.writeRideRequestData(user);
+                // Writes user and request data into Firebase Realtime Database.
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                Request request = new Request(
+                            firebaseUser.getUid(),
+                            mDatePicker.getText().toString(),
+                            mStartTimeSpinner.getSelectedItem().toString(),
+                            mEndTimeSpinner.getSelectedItem().toString(),
+                            mLocationSpinner.getSelectedItem().toString(),
+                            mDestinationSpinner.getSelectedItem().toString());
+                FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
+                        new FirebaseDatabaseReaderWriter();
+                firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
-                ArrayList<User> users = FindMatches.findMatches(user);
+                ArrayList<User> users =
+                        FindMatches.findMatches(firebaseUser.getUid(), request.getRequestId());
                 if (users.isEmpty()) {
                     Toast.makeText(RideRequestActivity.this,
                             "No match is found. Maybe try different time slots, or try again later?",
