@@ -93,6 +93,15 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             }
         });
 
+
+        mEnableGoogleMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RideRequestActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
