@@ -30,13 +30,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private final String timePrompt = "Choose a time";
     private final String locationPrompt = "Choose a location";
+    private final String distancePrompt = "Within -- miles";
 
     private TextView mDatePicker;
 
     private Spinner mStartTimeSpinner;
     private Spinner mEndTimeSpinner;
     private Spinner mLocationSpinner;
+    private Spinner mDistanceFromUserSpinner;
     private Spinner mDestinationSpinner;
+    private Spinner mDistanceFromDestSpinner;
 
     private Button mEnableGoogleMapButton;
     private Button mFindDestinationButton;
@@ -59,7 +62,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mStartTimeSpinner = findViewById(R.id.start_time_spinner);
         mEndTimeSpinner = findViewById(R.id.end_time_spinner);
         mLocationSpinner = findViewById(R.id.location_spinner);
+        mDistanceFromUserSpinner = findViewById(R.id.distance_from_user_spinner);
         mDestinationSpinner = findViewById(R.id.destination_spinner);
+        mDistanceFromDestSpinner = findViewById(R.id.distance_from_dest_spinner);
 
         mEnableGoogleMapButton = findViewById(R.id.google_map_location_button);
         mFindDestinationButton = findViewById(R.id.find_destination_button);
@@ -120,12 +125,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 // Writes user and request data into Firebase Realtime Database.
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 Request request = new Request(
-                            firebaseUser.getUid(),
-                            mDatePicker.getText().toString(),
-                            mStartTimeSpinner.getSelectedItem().toString(),
-                            mEndTimeSpinner.getSelectedItem().toString(),
-                            mLocationSpinner.getSelectedItem().toString(),
-                            mDestinationSpinner.getSelectedItem().toString());
+                        firebaseUser.getUid(),
+                        mDatePicker.getText().toString(),
+                        mStartTimeSpinner.getSelectedItem().toString(),
+                        mEndTimeSpinner.getSelectedItem().toString(),
+                        mLocationSpinner.getSelectedItem().toString(),
+                        // Only stores the miles number into request.
+                        mDistanceFromUserSpinner.getSelectedItem().toString().split(" ")[1],
+                        mDestinationSpinner.getSelectedItem().toString(),
+                        mDistanceFromDestSpinner.getSelectedItem().toString().split(" ")[1]
+                );
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
                         new FirebaseDatabaseReaderWriter();
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
@@ -158,6 +167,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         ArrayList<String> times = getTimeSpinnerElements();
         ArrayList<String> locations = getLocationElements();
         ArrayList<String> destinations = getDestinationElements();
+        ArrayList<String> distances = getDistanceElements();
 
         // Creates adapters for spinners.
         ArrayAdapter<String> timeAdapter =
@@ -166,6 +176,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         ArrayAdapter<String> locationAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, locations);
         locationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> distanceAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, distances);
+        distanceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ArrayAdapter<String> destinationAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, destinations);
         destinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -176,8 +189,12 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mEndTimeSpinner.setSelection(0);
         mLocationSpinner.setAdapter(locationAdapter);
         mLocationSpinner.setSelection(0);
+        mDistanceFromUserSpinner.setAdapter(distanceAdapter);
+        mDistanceFromUserSpinner.setSelection(0);
         mDestinationSpinner.setAdapter(destinationAdapter);
         mDestinationSpinner.setSelection(0);
+        mDistanceFromDestSpinner.setAdapter(distanceAdapter);
+        mDistanceFromDestSpinner.setSelection(0);
     }
 
     @Override
@@ -216,6 +233,18 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         return locations;
     }
 
+    private ArrayList<String> getDistanceElements() {
+        ArrayList<String> distances = new ArrayList<>();
+        distances.add(distancePrompt);
+        distances.add("Within 0.1 miles");
+        distances.add("Within 0.3 miles");
+        distances.add("Within 0.7 miles");
+        distances.add("Within 1 miles");
+        distances.add("Within 1.5 miles");
+        distances.add("Within 3 miles");
+        return distances;
+    }
+
     private ArrayList<String> getDestinationElements() {
         ArrayList<String> destinations = new ArrayList<>();
         destinations.add(locationPrompt);
@@ -230,7 +259,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)
-                || mDestinationSpinner.getSelectedItem().toString().equals(locationPrompt)) {
+                || mDistanceFromUserSpinner.getSelectedItem().toString().equals(distancePrompt)
+                || mDestinationSpinner.getSelectedItem().toString().equals(locationPrompt)
+                || mDistanceFromDestSpinner.getSelectedItem().toString().equals(distancePrompt)) {
             return false;
         }
         return true;
