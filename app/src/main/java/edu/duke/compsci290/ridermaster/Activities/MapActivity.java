@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
@@ -71,24 +69,45 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             new LatLng(-40,-168), new LatLng(71, 136));
     private static final int PLACE_PICKER_REQUEST = 1;
 
+
     //vars
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterDestination;
     private GoogleApiClient mGoogleApiClient;
     private PlaceInfo mPlace;
     private Marker mMarker;
+    double myStartingLng;
+    double myStartingLat;
+    double myDestLng;
+    double myDestLat;
+    double myDeviceLng;
+    double myDeviceLat;
+    double diffLat;
+    double diffLng;
+    double mLat;
+    double mLng;
+    float mFLat = (float) mLat;
+    float mFLng = (float) mLng;
+
+
 
     protected GeoDataClient mGeoDataClient;
+    protected GeoDataClient mGeoDataClientDestination;
 
     PlaceDetectionClient mPlaceDetectionClient;
+    PlaceDetectionClient mPlaceDetectionClientDestination;
 
 
     //widgets
     private AutoCompleteTextView mSearchText;
+    private AutoCompleteTextView mSearchTextDestination;
     private ImageView mGps, mInfo, mPlacePicker;
 
     private Boolean mLocationPermissionsGranted = false;
+    
+    
 
 
     @Override
@@ -96,6 +115,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
+        mSearchTextDestination = (AutoCompleteTextView) findViewById(R.id.input_search_destination);
         mGps = (ImageView) findViewById(R.id.ic_gps);
         mInfo = (ImageView) findViewById(R.id.place_info);
         mPlacePicker = (ImageView) findViewById(R.id.place_picker);
@@ -144,17 +164,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .enableAutoManage(this, this)
                 .build();
 
-        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
+//        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
+//        mSearchTextDestination.setOnItemClickListener(mAutocompleteClickListenerDestination);
 
         mGeoDataClient = Places.getGeoDataClient(this);
+        mGeoDataClientDestination = Places.getGeoDataClient(this);
 
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this);
+        mPlaceDetectionClientDestination = Places.getPlaceDetectionClient(this);
 
 
 
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this,mGeoDataClient, LAT_LNG_BOUNDS, null);
+        mPlaceAutocompleteAdapterDestination = new PlaceAutocompleteAdapter(this,mGeoDataClient, LAT_LNG_BOUNDS, null);
 
        mSearchText.setAdapter(mPlaceAutocompleteAdapter);
+
 
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -165,7 +190,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
 
                     geoLocate();
+                    Toast.makeText(MapActivity.this, String.valueOf(myStartingLat) + "," + String.valueOf(myStartingLng), Toast.LENGTH_SHORT).show();
 
+
+                }
+
+                return false;
+            }
+        });
+
+        mSearchTextDestination.setAdapter(mPlaceAutocompleteAdapterDestination);
+        mSearchTextDestination.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE ||
+                        event.getAction() == KeyEvent.ACTION_DOWN ||
+                        event.getAction() == KeyEvent.KEYCODE_ENTER){
+
+                    geoLocateSearchBarTwo();
+                    diffLat = myDestLat - myStartingLat;
+                    diffLng = myDestLng - myDestLng;
+                    mLat = (myDestLat + myStartingLat)/2;
+                    mLng = (myDestLng + myStartingLng)/2;
+
+
+//                    Toast.makeText(MapActivity.this, String.valueOf(diffLat) + "," + String.valueOf(diffLng), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MapActivity.this, String.valueOf(mLat) + "," + String.valueOf(mLng), Toast.LENGTH_SHORT).show();
                 }
 
                 return false;
@@ -263,10 +314,77 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Log.d(TAG, "geoLocate: found a location: " + address.toString());
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
 
+            myStartingLat = address.getLatitude();
+            myStartingLng = address.getLongitude();
+
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
+
+
         }
     }
+
+    private void geoLocateSearchBarTwo(){
+
+        Log.d(TAG, "geoLocate: geolocating");
+
+        String searchString = mSearchTextDestination.getText().toString();
+        Geocoder geocoder = new Geocoder(MapActivity.this);
+        List<Address> list = new ArrayList<>();
+        try{
+            list = geocoder.getFromLocationName(searchString, 1);
+
+        } catch (IOException e){
+            Log.e(TAG, "geoLocate: IOException" + e.getMessage());
+        }
+        Address address = null;
+        if(list.size() > 0){
+            address = list.get(0);
+
+            Log.d(TAG, "geoLocate: found a location: " + address.toString());
+            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
+
+            myDestLat = address.getLatitude();
+            myDestLng = address.getLongitude();
+
+
+
+            
+//            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
+//                    address.getAddressLine(0));
+
+
+
+
+        }
+
+        String searchString2 = mSearchText.getText().toString();
+        Geocoder geocoder2 = new Geocoder(MapActivity.this);
+        List<Address> list2 = new ArrayList<>();
+        try{
+            list2 = geocoder2.getFromLocationName(searchString2, 1);
+        } catch (IOException e) {
+            Log.e(TAG, "geoLocateSearchBarTwo: IOException" + e.getMessage());
+
+        }
+        Address address2 = null;
+        if (list2.size() > 0){
+            address2= list2.get(0);
+            myStartingLat = address2.getLatitude();
+            myStartingLng = address2.getLongitude();
+        }
+
+        mLat = (myDestLat + myStartingLat)/2;
+        mLng = (myDestLng + myStartingLng)/2;
+
+        LatLng latlng1 = new LatLng(myStartingLat, myStartingLng);
+        LatLng latlng2 = new LatLng(myDestLat, myDestLng);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds(latlng1, latlng2) ,100));
+        hideSoftKeyboard();
+
+    }
+
+
 
 
     private void getDeviceLocation() {
@@ -283,9 +401,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             Log.d(TAG, "onComplete: found location");
                             Location currentLocation = (Location) task.getResult();
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            myDeviceLat = currentLocation.getLatitude();
+                            myDeviceLng = currentLocation.getLongitude();
+                            LatLng myLatLng = new LatLng(myDeviceLat, myDeviceLng);
+
+                            //Toast.makeText(MapActivity.this, String.valueOf(myDeviceLat) + "," + String.valueOf(myDeviceLng), Toast.LENGTH_SHORT).show();
+
+                            moveCamera(myLatLng,
                                     DEFAULT_ZOOM,
                                     "My Location");
+                            
 
                         } else {
                             Log.d(TAG, "onComplete: current location is null");
@@ -343,13 +468,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        if(!title.equals("My Location")){
+        //if(!title.equals("My Location")){
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
             mMap.addMarker(options);
 
-        }
+        //}
 
         hideSoftKeyboard();
 
@@ -407,19 +532,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            hideSoftKeyboard();
-
-            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(position);
-            final String placeId = item.getPlaceId();
-
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
-
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-        }
-    };
+//    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            hideSoftKeyboard();
+//
+//            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(position);
+//            final String placeId = item.getPlaceId();
+//
+//            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
+//
+//            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+//        }
+//    };
+//
+//    private AdapterView.OnItemClickListener mAutocompleteClickListenerDestination = new AdapterView.OnItemClickListener() {
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            hideSoftKeyboard();
+//
+//            final AutocompletePrediction item = mPlaceAutocompleteAdapterDestination.getItem(position);
+//            final String placeId = item.getPlaceId();
+//
+//            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
+//
+//            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackDestination);
+//        }
+//    };
     
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -429,13 +568,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d(TAG, "onResult: place query did not complete successfully: " + places.getStatus().toString());
                 places.release(); //to prevent memory leak
                 return;
-
-
-
             }
             final Place place = places.get(0);
 
-            
             try {
                 mPlace = new PlaceInfo();
                 mPlace.setName(place.getName().toString());
@@ -465,9 +600,70 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
-    
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallbackDestination = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            hideSoftKeyboard();
+            if (!places.getStatus().isSuccess()){
+                Log.d(TAG, "onResult: place query did not complete successfully: " + places.getStatus().toString());
+                places.release(); //to prevent memory leak
+                return;
 
 
+
+            }
+            final Place place = places.get(0);
+
+
+            try {
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                mPlace.setAddress(place.getAddress().toString());
+                //mPlace.setAttribution(place.getAttributions().toString());
+                mPlace.setId(place.getId().toString());
+                mPlace.setLatlng(place.getLatLng());
+                mPlace.setRating(place.getRating());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setWebsite(place.getWebsiteUri());
+
+
+                Log.d(TAG, "onResult: place: " + mPlace.toString());
+
+            } catch (NullPointerException e){
+                Log.e(TAG, "onResult: NullPointerException "
+                        + e.getMessage());
+            }
+
+
+
+
+            moveCamera(new LatLng(place.getViewport().getCenter().latitude,
+                    place.getViewport().getCenter().longitude),DEFAULT_ZOOM, mPlace);
+
+//            moveCamera(new LatLng(mLat, mLng), DEFAULT_ZOOM, mPlace);
+//            hideSoftKeyboard();
+
+            places.release();
+
+
+
+        }
+    };
+
+    public LatLngBounds zoomBounds(LatLng sp, LatLng ep){
+        //starting point - sp
+        //ending point - ep
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boundsBuilder.include(sp);
+        boundsBuilder.include(ep);
+// pan to see all markers on map:
+        LatLngBounds bounds = boundsBuilder.build();
+        return bounds;
+
+
+
+    }
 
 
 
