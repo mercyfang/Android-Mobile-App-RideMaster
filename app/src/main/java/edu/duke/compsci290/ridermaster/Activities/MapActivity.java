@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -49,13 +48,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
+
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener{
@@ -67,124 +65,146 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private static final String TAG = "MapActivity";
 
+
+    /**
+     * Permissions to display the Map
+     */
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private Boolean mLocationPermissionsGranted = false;                //Until it checks all the permission are granted, this doesn't change to true
+
+    /**
+     * Default Map Parameters
+     */
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40,-168), new LatLng(71, 136));
+
+    /**
+     * Allows to pick locations nearby your current location
+     */
     private static final int PLACE_PICKER_REQUEST = 1;
 
 
-    //vars
-    private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
-    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterDestination;
-    private GoogleApiClient mGoogleApiClient;
-    private PlaceInfo mPlace;
-    private Marker mMarker;
-    double myStartingLng;
-    double myStartingLat;
-    double myDestLng;
-    double myDestLat;
-    double myDeviceLng;
-    double myDeviceLat;
-    double diffLat;
-    double diffLng;
-    double mLat;
-    double mLng;
-    float mFLat = (float) mLat;
-    float mFLng = (float) mLng;
-    private LatLng pickUpLatLng;
+    /**
+     * Map Objects
+     */
+    private GoogleMap mMap;                                                //Actual Map object
+    private FusedLocationProviderClient mFusedLocationProviderClient;      //combines GPS location and network location to get accurate location data
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterStarting;    //Adapter for the list that automatically provides suggestions (For the Starting location search bar)
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterDestination; //Adapter for the list that automatically provides suggestions (For the Destination search bar)
+    private GoogleApiClient mGoogleApiClient;                              //Provides to access to Google's APIs
+    private PlaceInfo mPlace;                                              //Provides data for a given Place object
+    private Marker mMarker;                                                //Marker object
+    protected GeoDataClient mGeoDataClientStarting;                        //Object that allows the map to find a place (for starting search bar)
+    protected GeoDataClient mGeoDataClientDestination;                     //Object that allows the map to find a place (for destination search bar)
+    private PlaceDetectionClient mPlaceDetectionClientStarting;            //Object that allows the map to find a place (for starting search bar)
+    private PlaceDetectionClient mPlaceDetectionClientDestination;         //Object that allows the map to find a place (for destination search bar)
 
+    /**
+     * Variables
+     */
+    private double myStartingLng;                                          //Starting location longitude
+    private double myStartingLat;                                          //Starting location latitude
+    private double myDestLng;                                              //Destination location longitude
+    private double myDestLat;                                              //Destination location latitude
+    private double myDeviceLng;                                            //Device's location longitude
+    private double myDeviceLat;                                            //Device's location latitude
+    private double diffLat;                                                //Difference between the starting and destination latitude
+    private double diffLng;                                                //Difference between the starting and destination longitude
+    private double mMidPointLat;                                           //Mid Point latitude between starting and destination latitude
+    private double mMidPointLng;                                           //Mid Point longitude between starting and destination longitude
+    private LatLng pickUpLatLng;                                           //Pick up location latlng object @Todo Remove
 
+    /**
+     * UI Elements
+     */
+    private AutoCompleteTextView mSearchTextStarting;                      //View that holds the text being typed for the starting location search bar
+    private AutoCompleteTextView mSearchTextDestination;                   //View that holds the text being typed for the destination location search bar
+    private ImageView mGps, mInfo, mPlacePicker;                           //Views that hold the icons @Todo Remove
+    private Button mConfirmButton;                                         //Button that confirms user's starting and destination location
 
-    protected GeoDataClient mGeoDataClient;
-    protected GeoDataClient mGeoDataClientDestination;
-
-    PlaceDetectionClient mPlaceDetectionClient;
-    PlaceDetectionClient mPlaceDetectionClientDestination;
-
-
-    //widgets
-    private AutoCompleteTextView mSearchText;
-    private AutoCompleteTextView mSearchTextDestination;
-    private ImageView mGps, mInfo, mPlacePicker;
-    private Button mConfirmButton;
-
-
-
-    private Boolean mLocationPermissionsGranted = false;
-
-
-
+    /**
+     * When the activity is first created
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //loads the pick up point from the previous run @Todo Remove
         loadData();
-        setContentView(R.layout.activity_map);
-        mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
-        mSearchTextDestination = (AutoCompleteTextView) findViewById(R.id.input_search_destination);
-        mGps = (ImageView) findViewById(R.id.ic_gps);
-        mInfo = (ImageView) findViewById(R.id.place_info);
-        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
-        mConfirmButton = (Button) findViewById(R.id.confirm_button);
 
+        //Attaches the xml for the map
+        setContentView(R.layout.activity_map);
+
+        //Attaches the objects to their associated UI elements
+        mSearchTextStarting = findViewById(R.id.input_search);
+        mSearchTextDestination = findViewById(R.id.input_search_destination);
+        mGps = findViewById(R.id.ic_gps);
+        mInfo = findViewById(R.id.place_info);
+        mPlacePicker = findViewById(R.id.place_picker);
+        mConfirmButton = findViewById(R.id.confirm_button);
+
+        /**
+         * After the Confirm Button is pressed, Ride Request Activity is launched
+         */
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveInfo();
                 Intent intent = new Intent(MapActivity.this, RideRequestActivity2.class);
                 startActivity(intent);
-
-
-
             }
         });
+        Log.d(TAG, "onCreate:InputType: " + mSearchTextStarting.getInputType());  //@Todo add Logger
 
-        Log.d(TAG, "onCreate:InputType: " + mSearchText.getInputType());
+        //Doesn't allow anything to be typed in the Search Destination Box when it's initialized
         mSearchTextDestination.setInputType(0);
 
-        Log.d(TAG, "onCreate: boop");
-
-        getLocationPermissions();
-
-
+        getLocationPermissionsAndInitMap();
     }
 
+    /**
+     * Map makes an internal call to this function
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Log.d(TAG, "onMapReady: map is ready");
+        Log.d(TAG, "onMapReady: map is ready"); //@Todo Logger
 
+        //if permission is granted then map is able to display user's current location
         if (mLocationPermissionsGranted) {
-            //getDeviceLocation();
-            geoLocatePickUp();
+            getDeviceLocation();
+            //geoLocatePickUp();
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+            //If permission to get user's current location is not in the manifest then location is not set
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+
+
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-            init();
+            addStartingDestinationLocationToMap();
 
 
         }
     }
 
-    private void init(){
-        Log.d(TAG, "init: initializing");
+    /**
+     * Takes in the user typed starting and destination location
+     * Adds marker to those locations
+     * Resizes the Map View to display both locations
+     */
+    private void addStartingDestinationLocationToMap(){
+        Log.d(TAG, "addStartingDestinationLocationToMap: initializing"); //@Todo Logger
 
+        //instantiates google api client
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -192,31 +212,37 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .enableAutoManage(this, this)
                 .build();
 
-        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
-//        mSearchTextDestination.setOnItemClickListener(mAutocompleteClickListenerDestination);
+        mSearchTextStarting.setOnItemClickListener(mAutocompleteClickListener);
+//      mSearchTextDestination.setOnItemClickListener(mAutocompleteClickListenerDestination);
 
-        mGeoDataClient = Places.getGeoDataClient(this);
+        mGeoDataClientStarting = Places.getGeoDataClient(this);
         mGeoDataClientDestination = Places.getGeoDataClient(this);
 
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this);
+        mPlaceDetectionClientStarting = Places.getPlaceDetectionClient(this);
         mPlaceDetectionClientDestination = Places.getPlaceDetectionClient(this);
 
+        mPlaceAutocompleteAdapterStarting = new PlaceAutocompleteAdapter(this, mGeoDataClientStarting, LAT_LNG_BOUNDS, null);
+        mPlaceAutocompleteAdapterDestination = new PlaceAutocompleteAdapter(this, mGeoDataClientStarting, LAT_LNG_BOUNDS, null);
 
-
-        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this,mGeoDataClient, LAT_LNG_BOUNDS, null);
-        mPlaceAutocompleteAdapterDestination = new PlaceAutocompleteAdapter(this,mGeoDataClient, LAT_LNG_BOUNDS, null);
-
-        mSearchText.setAdapter(mPlaceAutocompleteAdapter);
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSearchTextStarting.setAdapter(mPlaceAutocompleteAdapterStarting);
+        mSearchTextStarting.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            /**
+             * When the Enter is clicked for the starting location search
+             * @param v
+             * @param actionId
+             * @param keyEvent
+             * @return
+             */
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
                         || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                    moveMapToStartingLocation();
 
-                    geoLocate();
-                    int safe = mSearchTextDestination.getInputType();
+
+                    //Makes the Search Text for destination editable
                     mSearchTextDestination.setInputType(589825);
                     mSearchTextDestination.setText("");
                     mSearchTextDestination.setTextColor(getResources().getColor(R.color.black));
@@ -229,15 +255,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mSearchTextDestination.setAdapter(mPlaceAutocompleteAdapterDestination);
         mSearchTextDestination.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Checks if the user has entered the first destination properly and if not then tells them to do the step that they are missing
+             * @param v
+             */
             @Override
             public void onClick(View v) {
-                if(mSearchTextDestination.getInputType() == 0 && !mSearchText.getText().toString().trim().equals("")){
-                    Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchText.getText().toString().trim()));
+                if(mSearchTextDestination.getInputType() == 0 && !mSearchTextStarting.getText().toString().trim().equals("")){
+                    Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim())); //@Todo Logger
                     mSearchTextDestination.setText("Press Enter for the Starting Location");
                     mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
                 }
-                if(mSearchTextDestination.getInputType() == 0 && mSearchText.getText().toString().trim().equals("")){
-                    //Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchText.getText().toString().trim()));
+                if(mSearchTextDestination.getInputType() == 0 && mSearchTextStarting.getText().toString().trim().equals("")){
+                    //Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim()));
                     mSearchTextDestination.setText("Input Starting Location and press Enter");
                     mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
                 }
@@ -245,6 +275,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
         mSearchTextDestination.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            /**
+             * After user has press Enter on the second search bar, then both the maps resizes to include both location
+             * @param v
+             * @param actionId
+             * @param event
+             * @return
+             */
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH ||
@@ -252,20 +289,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         event.getAction() == KeyEvent.ACTION_DOWN ||
                         event.getAction() == KeyEvent.KEYCODE_ENTER){
 
-                    geoLocateSearchBarTwo();
-                    diffLat = myDestLat - myStartingLat;
-                    diffLng = myDestLng - myDestLng;
-                    mLat = (myDestLat + myStartingLat)/2;
-                    mLng = (myDestLng + myStartingLng)/2;
+                    moveMapToDestinationLocation();
+                    mMidPointLat = (myDestLat + myStartingLat)/2;
+                    mMidPointLng = (myDestLng + myStartingLng)/2;
 //                    Toast.makeText(MapActivity.this, String.valueOf(diffLat) + "," + String.valueOf(diffLng), Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(MapActivity.this, String.valueOf(mLat) + "," + String.valueOf(mLng), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MapActivity.this, String.valueOf(mMidPointLat) + "," + String.valueOf(mMidPointLng), Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
-
-
         });
-        
+
+        //@ToDo remove GPS
         mGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,6 +308,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
+        //@ToDo remove mInfo
         mInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -286,22 +321,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         Log.d(TAG, "onClick: place info" + mPlace.toString());
                         mMarker.showInfoWindow();
                     }
-
                 } catch (NullPointerException e){
                     Log.e(TAG, "onClick: NullPointerException" + e.getMessage());
-
                 }
-
             }
         });
 
+        //@ToDo remove place picker
         mPlacePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
                 try {
                     startActivityForResult(builder.build(MapActivity.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException e) {
@@ -311,83 +341,70 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Log.e(TAG, "onClick: GooglePlayServicesRepairableException"
                     + e.getMessage());
                 }
-
             }
         });
-
-        geoLocatePickUp();
-
         hideSoftKeyboard();
 
-
-    }
-
-    public void initPickUpPoint(){
-        Log.d(TAG, "initPickUpPoint: hello");
-
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, this)
-                .build();
-
+        //@Todo remove
         geoLocatePickUp();
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
-
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient
                         , place.getId());
-
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-
                 String toastMsg = String.format("Place: %s", place.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-
-
             }
         }
     }
 
 
+    /**
+     * Gets the user's input starting location text
+     * Converts the address into latitude and longitude coordinates
+     * sets the  global variables to the retrieved latitue and longitude coordinates
+     *
+     */
+    private void moveMapToStartingLocation(){
+        Log.d(TAG, "moveMapToStartingLocation: geolocating"); //@Todo Logger
 
-    private void geoLocate(){
-        Log.d(TAG, "geoLocate: geolocating");
+        String searchString = mSearchTextStarting.getText().toString();
 
-        String searchString = mSearchText.getText().toString();
+        //geocoder converts addresses into latitude and longitude coordinates
         Geocoder geocoder = new Geocoder(MapActivity.this);
         List<Address> list = new ArrayList<>();
         try{
             list = geocoder.getFromLocationName(searchString, 1);
 
         } catch (IOException e){
-            Log.e(TAG, "geoLocate: IOException" + e.getMessage());
+            Log.e(TAG, "moveMapToStartingLocation: IOException" + e.getMessage());
         }
 
         if(list.size() > 0){
             Address address = list.get(0);
 
-            Log.d(TAG, "geoLocate: found a location: " + address.toString());
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "moveMapToStartingLocation: found a location: " + address.toString()); //@Todo Logger
 
             myStartingLat = address.getLatitude();
             myStartingLng = address.getLongitude();
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
-
-
         }
     }
 
-    private void geoLocateSearchBarTwo(){
+    /**
+     * First gets the user's starting location
+     * Gets the user's destination location
+     * resizes the view so that both locations are visible and adds two markers
+     */
+    private void moveMapToDestinationLocation(){
 
-        Log.d(TAG, "geoLocate: geolocating");
+        Log.d(TAG, "moveMapToStartingLocation: geolocating");
 
         String searchString = mSearchTextDestination.getText().toString();
         Geocoder geocoder = new Geocoder(MapActivity.this);
@@ -396,14 +413,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             list = geocoder.getFromLocationName(searchString, 1);
 
         } catch (IOException e){
-            Log.e(TAG, "geoLocate: IOException" + e.getMessage());
+            Log.e(TAG, "moveMapToStartingLocation: IOException" + e.getMessage());
         }
         Address address = null;
         if(list.size() > 0){
             address = list.get(0);
 
-            Log.d(TAG, "geoLocate: found a location: " + address.toString());
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "moveMapToStartingLocation: found a location: " + address.toString()); //@Todo Logger
 
             myDestLat = address.getLatitude();
             myDestLng = address.getLongitude();
@@ -411,13 +427,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                    address.getAddressLine(0));
         }
 
-        String searchString2 = mSearchText.getText().toString();
+        String searchString2 = mSearchTextStarting.getText().toString();
         Geocoder geocoder2 = new Geocoder(MapActivity.this);
         List<Address> list2 = new ArrayList<>();
         try{
             list2 = geocoder2.getFromLocationName(searchString2, 1);
         } catch (IOException e) {
-            Log.e(TAG, "geoLocateSearchBarTwo: IOException" + e.getMessage());
+            Log.e(TAG, "moveMapToDestinationLocation: IOException" + e.getMessage()); //@Todo Logger
 
         }
         Address address2 = null;
@@ -427,8 +443,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             myStartingLng = address2.getLongitude();
         }
 
-        mLat = (myDestLat + myStartingLat)/2;
-        mLng = (myDestLng + myStartingLng)/2;
+        mMidPointLat = (myDestLat + myStartingLat)/2;
+        mMidPointLng = (myDestLng + myStartingLng)/2;
 
         LatLng latlng1 = new LatLng(myStartingLat, myStartingLng);
         LatLng latlng2 = new LatLng(myDestLat, myDestLng);
@@ -438,12 +454,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .position(latlng2);
         mMap.addMarker(options1);
         hideSoftKeyboard();
-
     }
 
+    //@Todo Remove
     private void geoLocatePickUp(){
-
-
         LatLng latlng1 = new LatLng(pickUpLatLng.latitude, pickUpLatLng.longitude);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds(pickUpLatLng, pickUpLatLng) ,100));
@@ -451,15 +465,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .position(pickUpLatLng);
         mMap.addMarker(options2);
         hideSoftKeyboard();
-
-
     }
 
     private void getDeviceLocation() {
-        Log.d(TAG, "getDeviceLocation: getting the devicescurrent location");
+        Log.d(TAG, "getDeviceLocation: getting the devicescurrent location"); //@Todo Logger
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        /**
+         * When the permission is granted, it finds the user's device location
+         * Sets the global variables of the Lat and Lng
+         * Resizes the map to display the device location
+         */
         try {
             if (mLocationPermissionsGranted) {
                 com.google.android.gms.tasks.Task location = mFusedLocationProviderClient.getLastLocation();
@@ -467,90 +484,97 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "onComplete: found location");
+                            Log.d(TAG, "onComplete: found location"); //@Todo Logger
                             Location currentLocation = (Location) task.getResult();
                             myDeviceLat = currentLocation.getLatitude();
                             myDeviceLng = currentLocation.getLongitude();
                             LatLng myLatLng = new LatLng(myDeviceLat, myDeviceLng);
 
-                            //Toast.makeText(MapActivity.this, String.valueOf(myDeviceLat) + "," + String.valueOf(myDeviceLng), Toast.LENGTH_SHORT).show();
-
-                            moveCamera(myLatLng,
-                                    DEFAULT_ZOOM,
-                                    "My Location");
+                            //resizes map's location to encompass a latlng
+                            moveCamera(myLatLng, DEFAULT_ZOOM, "My Location");
                             
 
                         } else {
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(MapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onComplete: current location is null"); //@Todo Logger
+                            Toast.makeText(MapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show(); //@Todo Toaster
                         }
-
                     }
                 });
             }
-
         } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
         }
 
-
     }
+
+    /**
+     * Moves the camera to the place near you
+     * @param latLng
+     * @param zoom
+     * @param placeInfo
+     */
     private void moveCamera(LatLng latLng, float zoom, PlaceInfo placeInfo) {
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
+        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude); //@Todo Logger
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
         
         mMap.clear();
-
-
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapActivity.this));
         if (placeInfo != null){
             try{
-
                 String snippet = "Address: " + placeInfo.getAddress() + "\n" +
                         "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
                         "Website: " + placeInfo.getWebsite() + "\n" +
                         "Price Rating: " + placeInfo.getRating() + "\n";
-
                 MarkerOptions options = new MarkerOptions()
                         .position(latLng)
                         .title(placeInfo.getName())
                         .snippet(snippet);
 
                 mMarker = mMap.addMarker(options);
-
-                
             } catch (NullPointerException e){
                 Log.e(TAG, "moveCamera: NullPointException" + e.getMessage() );
             }
         } else {
             mMap.addMarker(new MarkerOptions().position(latLng));
         }
-
-
         hideSoftKeyboard();
 
     }
 
-
+    /**
+     * Resizes the map to a given Zoom Bound, given the coordinates of a place
+     * @param latLng
+     * @param zoom
+     * @param title
+     */
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
+        //Does not place marker on the user's device location, but only the marker if the user's device location is not the searched location
         if(!title.equals("My Location")){
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
             mMap.addMarker(options);
-
         }
-
         hideSoftKeyboard();
-
     }
 
-    private void getLocationPermissions() {
-        Log.d(TAG, "getLocationPermissions: getting location permissions");
+    /**
+     * Checks the permissions in order to use the map
+     */
+    private void getLocationPermissionsAndInitMap() {
+
+        Log.d(TAG, "getLocationPermissionsAndInitMap: getting location permissions"); //@ToDo Add Logger
+
+        //Array of permissions to check
         String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+
+
+        /**
+         * If all permissions are granted initializes map, else requests the permissions
+         */
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionsGranted = true;
@@ -563,6 +587,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * When the permission request results are recevied, the permission boolean is set to true if the permission is granted and initializes map
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called.");
@@ -573,11 +603,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             mLocationPermissionsGranted = false;
-                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed"); //@Todo Logger
                             return;
                         }
                     }
-                    Log.d(TAG, "onRequestPermissionsResult: permission granted");
+                    Log.d(TAG, "onRequestPermissionsResult: permission granted"); //@Todo Logger
                     mLocationPermissionsGranted = true;
 
                     initMap();
@@ -586,14 +616,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * Initializes Map fragment from the XML
+     */
     private void initMap() {
+        Log.d(TAG, "initMap: initializing Map"); //@Todo Logger
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        Log.d(TAG, "initMap: initializing Map");
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
 
+        //MapsAsync initializes the map system and view
         mapFragment.getMapAsync(MapActivity.this);
-
-
+        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show(); //@Todo Toaster
     }
 
     private void hideSoftKeyboard(){
@@ -605,7 +638,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             hideSoftKeyboard();
 
-            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(position);
+            final AutocompletePrediction item = mPlaceAutocompleteAdapterStarting.getItem(position);
             final String placeId = item.getPlaceId();
 
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
@@ -627,7 +660,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //            placeResult.setResultCallback(mUpdatePlaceDetailsCallbackDestination);
 //        }
 //    };
-    
+
+    /**
+     * When the text is entered, a request goes out to find possible location
+     * This CallBack occurs once the results are obtained
+     */
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(@NonNull PlaceBuffer places) {
@@ -638,7 +675,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 return;
             }
             final Place place = places.get(0);
-
             try {
                 mPlace = new PlaceInfo();
                 mPlace.setName(place.getName().toString());
@@ -662,7 +698,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             hideSoftKeyboard();
 
-            places.release();
+            places.release(); //to avoid memory leak
         }
     };
 
@@ -693,11 +729,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             moveCamera(new LatLng(place.getViewport().getCenter().latitude,
                     place.getViewport().getCenter().longitude),DEFAULT_ZOOM, mPlace);
-//            moveCamera(new LatLng(mLat, mLng), DEFAULT_ZOOM, mPlace);
+//            moveCamera(new LatLng(mMidPointLat, mMidPointLng), DEFAULT_ZOOM, mPlace);
 //            hideSoftKeyboard();
             places.release();
         }
     };
+
+    /**
+     * Creates a bound object for the two Lat Lng points that are given
+     * @param sp
+     * @param ep
+     * @return
+     */
     public LatLngBounds zoomBounds(LatLng sp, LatLng ep){
         //starting point - sp
         //ending point - ep
@@ -710,23 +753,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return bounds;
     }
 
+    /**
+     * saves the information that the user's inputted for the starting and destination
+     * this info is shared with the ride request activity
+     */
     public void saveInfo(){
         SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor = UtilityFunctions.putDouble(editor, "Starting Location Latitude", myStartingLat);
         editor = UtilityFunctions.putDouble(editor, "Starting Location Longitude", myStartingLng);
-        editor.putString("Starting Location Text", mSearchText.getText().toString());
+        editor.putString("Starting Location Text", mSearchTextStarting.getText().toString());
         editor = UtilityFunctions.putDouble(editor, "Destination Location Latitude", myDestLat);
         editor = UtilityFunctions.putDouble(editor, "Destination Location Longitude", myDestLng);
         editor.putString("Destination Location Text", mSearchTextDestination.getText().toString());
         editor.commit();
 
-        Log.d(TAG, "saveInfo: " + myStartingLat + myStartingLng + mSearchText.getText() + myDestLat + myDestLng + mSearchTextDestination.getText());
+        Log.d(TAG, "saveInfo: " + myStartingLat + myStartingLng + mSearchTextStarting.getText() + myDestLat + myDestLng + mSearchTextDestination.getText());
         Log.d(TAG, "saveInfo: "+ sharedPref.getAll().toString());
 
     }
 
+    //@todo remove
     public void loadData(){
 
         SharedPreferences sharedPref = getSharedPreferences("PickUpPointInfo", Context.MODE_PRIVATE);
