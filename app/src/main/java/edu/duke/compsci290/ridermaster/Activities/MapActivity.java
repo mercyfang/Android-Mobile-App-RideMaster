@@ -154,7 +154,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 saveInfo();
-                Intent intent = new Intent(MapActivity.this, RideRequestActivity2.class);
+                Intent intent = new Intent(MapActivity.this, RideRequestActivity.class);
                 startActivity(intent);
             }
         });
