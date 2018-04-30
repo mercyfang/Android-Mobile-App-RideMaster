@@ -284,7 +284,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
-                builder.setTitle("How far away can your match be?");
+                builder.setTitle("How far away can youfr match be?");
                 builder.setItems(distances, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -365,20 +365,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
                 );
 
-                //save argument data in sharedpreferences to pass on to matchResultActivity
-                SharedPreferences sharedPref = getSharedPreferences("UserPathInfoMostRecent", Context.MODE_PRIVATE);
-
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("uid",firebaseUser.getUid());
-                editor.putString("data",mDatePicker.getText().toString());
-                editor.putString("startTime",String.format("%02d:%02d", startTimeHours, startTimeMinutes));
-                editor.putString("endTime",String.format("%02d:%02d", endTimeHours, endTimeMinutes));
-                editor.putString("location",String.format("%f.%f", myStartingLat , myStartingLng));
-                editor.putString("distanceFromUser",String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)));
-                editor.putString("destination", String.format("%f.%f", myDestinationLat, myDestinationLng));
-                editor.putString("distanceFromDestination",String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69)));
-
-                editor.commit();
 
 
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
@@ -387,21 +373,26 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
                 User user;
-                try {
-                    //MERCY DELETE HERE
-                    user = finder.findMatches(request);
-                    editor.putString("email", "email");
-                    editor.commit();
+                String uid = firebaseUser.getUid();
+                String requestId = request.getRequestId();
+                String date = mDatePicker.getText().toString();
 
+                try {
+                    user = finder.findMatches(request);
                 } catch (NoSuchElementException e) {
-                    //no match found
-                    editor.putString("email", "none");
-                    editor.commit();
+
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
                 // TODO: passes objects to another activity using Parcelable or Serializable class.
-                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), user);
+
+                intent.putExtra("uid",
+                        uid);
+                intent.putExtra("requestid",
+                        requestId);
+                intent.putExtra("date",
+                        date);
+
                 startActivity(intent);
             }
         });
