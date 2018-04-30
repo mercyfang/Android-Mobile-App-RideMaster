@@ -68,10 +68,33 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private Calendar mCalendar;
 
     private int startTime;
+
+
+
+
+
     private int endTime;
 
 
     private static final String TAG = "RideRequestActivity";
+
+    /**
+     * Variables for firebase
+     *
+     *
+     */
+
+    private int startTimeHours;
+    private int startTimeMinutes;
+
+    private int endTimeHours;
+    private int endTimeMinutes;
+
+    private double myStartingLat;
+    private double myStartingLng;
+
+    private double myDestinationLat;
+    private double myDestinationLng;
 
 
 
@@ -174,10 +197,18 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 }else{
                     timeOfDay = "AM";
                 }
+                if(hour == 0){
+                    hour = 12;
+                }
+
 
                 startTime = view.getHour() * 60 + view.getMinute();
+                startTimeHours = view.getHour();
+                startTimeMinutes = view.getMinute();
 
-                updateBeginTime(String.format("%d:%.2d %s", hour, view.getMinute(), timeOfDay));
+
+
+                updateBeginTime(String.format("%d:%02d %s", hour, view.getMinute(), timeOfDay));
 
             }
         };
@@ -207,10 +238,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 }else{
                     timeOfDay = "AM";
                 }
+                if(hour == 0){
+                    hour = 12;
+                }
 
                 endTime = view.getHour()*60 + view.getMinute();
 
-                updateEndTime(String.format("%d:%.2d %s", hour, view.getMinute(), timeOfDay));
+                endTimeHours = view.getHour();
+                endTimeMinutes = view.getMinute();
+
+                updateEndTime(String.format("%d:%02d %s", hour, view.getMinute(), timeOfDay));
 
             }
         };
@@ -224,6 +261,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         mCalendar.get(Calendar.MINUTE),
                         false);
                 // Disables past dates in date picker.
+
+
+
 
                 timePickerDialog.show();
             }
@@ -276,6 +316,17 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mFindMatchesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onDatePicker: " + mDatePicker);
+                Log.d(TAG, "onStartTimeHours: " + startTimeHours);
+                Log.d(TAG, "onStartTimeMinutes: " + startTimeMinutes);
+                Log.d(TAG, "onEndTimeHours: " + endTimeHours);
+                Log.d(TAG, "onEndTimeMinutes: " + endTimeMinutes);
+                Log.d(TAG, "onStartLat" + myStartingLat);
+                Log.d(TAG, "onStartLng " + myStartingLng);
+                Log.d(TAG, "mUserRange: " + mUserRangeTextView.getText().toString());
+                Log.d(TAG, "onEndLat" + myDestinationLat);
+                Log.d(TAG, "onEndLng" + myDestinationLng);
+                Log.d(TAG, "mDestinationRange: " + mDestinationRangeTextView.getText().toString());
                 if (!verifyMatchInputs()) {
                     Toast.makeText(RideRequestActivity.this, "Please fill out all information",
                             Toast.LENGTH_SHORT).show();
@@ -290,16 +341,19 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 // Writes user and request data into Firebase Realtime Database.
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                 Request request = new Request(
                         firebaseUser.getUid(),
                         mDatePicker.getText().toString(),
-                        mBeginTimeTextView.getText().toString(),
-                        mBeginTimeTextView.getText().toString(),
-                        mLocationTextView.getText().toString(),
+                        String.format("%02d:%02d", startTimeHours, startTimeMinutes),
+                        String.format("%02d:%02d", endTimeHours, endTimeMinutes),
+
+                        String.format("%f.%f", myStartingLat , myStartingLng),
                         // Only stores the miles number into request.
-                        mUserRangeTextView.getText().toString().split(" ")[0],
-                        mDestinationTextView.getText().toString(),
-                        mDestinationRangeTextView.getText().toString().split(" ")[0]
+                        String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)),
+                        String.format("%f.%f", myDestinationLat, myDestinationLng),
+
+                        String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
                 );
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
                         new FirebaseDatabaseReaderWriter();
@@ -455,11 +509,11 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        double myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);
-        double myStartingLng = UtilityFunctions.getDouble(sharedPref, "Starting Location Longitude", 0);
+        myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);
+        myStartingLng = UtilityFunctions.getDouble(sharedPref, "Starting Location Longitude", 0);
         startingLocText = sharedPref.getString("Starting Location Text", "Durham");
-        double myDestinationLat = UtilityFunctions.getDouble(sharedPref, "Destination Location Latitude", 0);
-        double myDestinationLng = UtilityFunctions.getDouble(sharedPref, "Destination Location Longitude", 0);
+        myDestinationLat = UtilityFunctions.getDouble(sharedPref, "Destination Location Latitude", 0);
+        myDestinationLng = UtilityFunctions.getDouble(sharedPref, "Destination Location Longitude", 0);
         destinationLocText = sharedPref.getString("Destination Location Text", "Raleigh");
         Log.d(TAG, "loadData: " + myStartingLat + myStartingLng + startingLocText +
                 myDestinationLat + myDestinationLng + destinationLocText);
