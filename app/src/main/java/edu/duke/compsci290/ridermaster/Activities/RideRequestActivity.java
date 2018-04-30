@@ -19,11 +19,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 import FirebaseDatabase.FindMatches;
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
 import FirebaseDatabase.Request;
 import FirebaseDatabase.User;
+
 import edu.duke.compsci290.ridermaster.R;
 
 public class RideRequestActivity extends BaseNavDrawerActivity {
@@ -98,7 +100,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             }
         });
 
-
         mEnableGoogleMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,9 +140,11 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         new FirebaseDatabaseReaderWriter();
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
-                ArrayList<User> users =
-                        FindMatches.findMatches(firebaseUser.getUid(), request.getRequestId());
-                if (users.isEmpty()) {
+                FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
+                User user;
+                try {
+                    user = finder.findMatches(request);
+                } catch (NoSuchElementException e) {
                     Toast.makeText(RideRequestActivity.this,
                             "No match is found. Maybe try different time slots, or try again later?",
                             Toast.LENGTH_SHORT).show();
@@ -150,7 +153,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
                 // TODO: passes objects to another activity using Parcelable or Serializable class.
-                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), users);
+                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), user);
                 startActivity(intent);
             }
         });
@@ -255,7 +258,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     }
 
     private boolean verifyMatchInputs() {
-        if (mDatePicker.getText().toString().equals(R.string.choose_a_date)
+        if (mDatePicker.getText().toString().equals(getString(R.string.choose_a_date))
                 || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)

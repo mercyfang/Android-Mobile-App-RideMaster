@@ -10,11 +10,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.NoSuchElementException;
+
 /**
  * Created by mercyfang on 4/10/18.
  */
 
 public class FirebaseDatabaseReaderWriter {
+
+    private static String TAG = "FDReaderWriter";
 
     private FirebaseUser firebaseUser;
     private DatabaseReference root;
@@ -22,6 +26,53 @@ public class FirebaseDatabaseReaderWriter {
     public FirebaseDatabaseReaderWriter() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         root = FirebaseDatabase.getInstance().getReference();
+    }
+
+    /**
+     * Reads the date table and finds the requestId in requests table and computes score to find
+     * the best match.
+     * If no matched requests in the table, throw NoSuchElementException.
+     *
+     * @param request
+     */
+    public void readDateAndRequest(final Request request) {
+        String[] dateArray = request.date.split("/");
+        final DatabaseReference datesRef =
+                root.child("dates").child(dateArray[0]).child(dateArray[1]).child(dateArray[2]);
+        final DatabaseReference requestsRef = root.child("requests");
+
+        final int[] maxScore = new int[1];
+        maxScore[0] = Integer.MIN_VALUE;
+        final String[] matchRequestId = new String[1];
+        final String[] currRequestId = new String[1];
+        datesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChildren()) {
+                    throw new NoSuchElementException();
+                }
+                for (DataSnapshot dateSnapshot : dataSnapshot.getChildren()) {
+                    // Reads the same requestId entry in requests table.
+                    DatabaseReference requestRef = requestsRef.child(dateSnapshot.getKey());
+                    // Computes score and update best match if needed.
+                    int currScore = computeScore(request, requestRef, currRequestId);
+                    if (currScore > maxScore[0]) {
+                        maxScore[0] = currScore;
+                        matchRequestId[0] = currRequestId[0];
+                    }
+                }
+
+                // If no qualified user is found, throws exception.
+                if (maxScore[0] == Integer.MIN_VALUE) {
+                    throw new NoSuchElementException();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Firebase Date table read failed.");
+            }
+        });
     }
 
     public void writeUserAndRideRequest(final Request request) {
@@ -61,7 +112,7 @@ public class FirebaseDatabaseReaderWriter {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("FDReaderWriter", "Failed to read value.", databaseError.toException());
+                Log.d(TAG, "Failed to read value.", databaseError.toException());
             }
         });
 
@@ -108,5 +159,53 @@ public class FirebaseDatabaseReaderWriter {
         // }
         DatabaseReference datesRef = root.child("dates");
         datesRef.child(date).child(requestId).setValue(true);
+    }
+
+    private int computeScore(final Request request,
+                             final DatabaseReference requestRef,
+                             final String[] currRequestId) {
+        final int[] score = new int[1];
+        requestRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Do no match again if already matched.
+                boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
+                if (isMatched) {
+                    return;
+                }
+                // Do not match if same user.
+                String uId = (String) dataSnapshot.child("uId").getValue();
+                if (uId.equals(request.uId)) {
+                    return;
+                }
+
+                // The current requestId to be stored if achieves max score.
+                currRequestId[0] = (String) dataSnapshot.child("requestId").getValue();
+
+                // First checks time within range. If endTime of current user request is
+                // before a request startTime, or if startTime of current user request is after a
+                // request endTime, then do not match the two requests.
+                String startTime = (String) dataSnapshot.child("startTime").getValue();
+                String endTime = (String) dataSnapshot.child("endTime").getValue();
+                if (request.startTime.compareTo(endTime) >= 0
+                        || request.endTime.compareTo(startTime) <= 0) {
+                    return;
+                }
+                // Start time is the latest start time between the two.
+                String start = request.startTime.compareTo(startTime) < 0
+                        ? startTime : request.startTime;
+                // End time is the earliest start time between the two.
+                String end = request.endTime.compareTo(endTime) > 0
+                        ? endTime : request.endTime;
+                score[0] += Math.abs(start.compareTo(end));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Firebase Request table read request failed.");
+            }
+        });
+
+        return score[0];
     }
 }
