@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -32,10 +33,11 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
     ArrayList<LatLng> pickUpPointsLatLng = new ArrayList<>();
 
-    private Button mBackButton;
-    private Button mNewMatchButton;
-    private Button mNewTripButton;
+    private ConstraintLayout mBackButton;
+    private ConstraintLayout mNewMatchButton;
+    private ConstraintLayout mNewTripButton;
     private TextView mStatusText;
+
 
 
     @Override
@@ -52,6 +54,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
         //if found match put in the TextView
         mStatusText = findViewById(R.id.match_status_text_view);
+        //MERCY
         String email = sharedPref.getString("userEmail","none");
         updateStatusTextView(email);
 
@@ -59,7 +62,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
 
-
+/*
         //set my new match button for the same trip, should just find new user with same time/loc info
         mNewMatchButton = findViewById(R.id.request_another_user_button);
         mNewMatchButton.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +116,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
                 startActivity(intent);
             }
         });
-
+*/
 
         //set my new trip button for going back to request for new trip
 
