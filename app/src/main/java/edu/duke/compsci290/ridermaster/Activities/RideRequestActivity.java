@@ -70,10 +70,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private int startTime;
     private int endTime;
 
-
     private static final String TAG = "RideRequestActivity";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +79,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         loadData();
         // Sets activity main view.
         setContentView(R.layout.activity_ride_request);
-
 
         mDatePicker = findViewById(R.id.choose_date_field_text_view);
         mCalendarButton = findViewById(R.id.calendarButton);
@@ -135,7 +131,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
         mLocationTextView.setText(startingLocText);
         mDestinationTextView.setText(destinationLocText);
-
 
         // Creates DatePicker Dialog.
         mCalendar = Calendar.getInstance();
@@ -190,14 +185,12 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         mCalendar.get(Calendar.HOUR_OF_DAY),
                         mCalendar.get(Calendar.MINUTE),
                         false);
-                // Disables past dates in date picker.
 
                 timePickerDialog.show();
             }
         });
 
         final TimePickerDialog.OnTimeSetListener time2 = new TimePickerDialog.OnTimeSetListener() {
-
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 int hour = view.getHour() % 12;
@@ -207,11 +200,8 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 }else{
                     timeOfDay = "AM";
                 }
-
                 endTime = view.getHour()*60 + view.getMinute();
-
                 updateEndTime(String.format("%d:%.2d %s", hour, view.getMinute(), timeOfDay));
-
             }
         };
         mEndTimeButton.setOnClickListener(new View.OnClickListener() {
@@ -232,8 +222,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mUserRangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final CharSequence distances[] = new CharSequence[] {"Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles", "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
-
+                final CharSequence distances[] = new CharSequence[] {
+                        "Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles",
+                        "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
                 builder.setTitle("How far away can your match be?");
@@ -250,7 +241,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mDestinationRangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final CharSequence distances[] = new CharSequence[] {"Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles", "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
+                final CharSequence distances[] = new CharSequence[] {
+                        "Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles",
+                        "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
                 builder.setTitle("How far can your match's Destination be?");
@@ -263,7 +256,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 builder.show();
             }
         });
-
 
         mEnableGoogleMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,9 +342,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         ArrayAdapter<String> destinationAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, destinations);
         destinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-
     }
 
     @Override
@@ -367,12 +356,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     }
 
     private void updateBeginTime(String s) {
-
         mBeginTimeTextView.setText(s);
     }
 
     private void updateEndTime(String s) {
-
         mEndTimeTextView.setText(s);
     }
 
@@ -454,13 +441,18 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private void loadData(){
         SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
 
-        SharedPreferences.Editor editor = sharedPref.edit();
-        double myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);
-        double myStartingLng = UtilityFunctions.getDouble(sharedPref, "Starting Location Longitude", 0);
-        startingLocText = sharedPref.getString("Starting Location Text", "Durham");
-        double myDestinationLat = UtilityFunctions.getDouble(sharedPref, "Destination Location Latitude", 0);
-        double myDestinationLng = UtilityFunctions.getDouble(sharedPref, "Destination Location Longitude", 0);
-        destinationLocText = sharedPref.getString("Destination Location Text", "Raleigh");
+        double myStartingLat = UtilityFunctions.getDouble(
+                sharedPref, "Starting Location Latitude", 0);
+        double myStartingLng = UtilityFunctions.getDouble(
+                sharedPref, "Starting Location Longitude", 0);
+        startingLocText = sharedPref.getString(
+                "Starting Location Text", "Durham");
+        double myDestinationLat = UtilityFunctions.getDouble(
+                sharedPref, "Destination Location Latitude", 0);
+        double myDestinationLng = UtilityFunctions.getDouble(
+                sharedPref, "Destination Location Longitude", 0);
+        destinationLocText = sharedPref.getString(
+                "Destination Location Text", "Raleigh");
         Log.d(TAG, "loadData: " + myStartingLat + myStartingLng + startingLocText +
                 myDestinationLat + myDestinationLng + destinationLocText);
         Log.d(TAG, "saveInfo: "+ sharedPref.getAll().toString());
