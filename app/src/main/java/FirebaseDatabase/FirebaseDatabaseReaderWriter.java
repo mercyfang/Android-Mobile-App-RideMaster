@@ -120,6 +120,28 @@ public class FirebaseDatabaseReaderWriter {
         writeDate(request.date, requestId);
     }
 
+    private void deleteUserAndRideRequest(String uid, String requestId){
+        DatabaseReference requestRef = root.child("users").child(uid).child(requestId);
+        requestRef.setValue(null);
+        requestRef.removeValue();
+    }
+
+    private void deleteDate(String date, String requestId){
+        DatabaseReference datesRef = root.child("dates");
+        datesRef.child(date).child(requestId).setValue(null);
+        datesRef.child(date).child(requestId).removeValue();
+    }
+
+    private void deleteRideRequest(String requestID){
+        //delete a match request from database
+
+        DatabaseReference requestsRef = root.child("requests");
+        DatabaseReference currRequestRef = requestsRef.child(requestID);
+
+        currRequestRef.child("uId").removeValue();
+        currRequestRef.removeValue();
+    }
+
     private void writeRideRequest(Request request) {
         // Requests table looks like:
         // requests {
@@ -145,6 +167,8 @@ public class FirebaseDatabaseReaderWriter {
         currRequestRef.child("uId").setValue(firebaseUser.getUid());
     }
 
+
+
     private void writeDate(String date, String requestId) {
         // Date table looks like:
         // dates {
@@ -160,6 +184,8 @@ public class FirebaseDatabaseReaderWriter {
         DatabaseReference datesRef = root.child("dates");
         datesRef.child(date).child(requestId).setValue(true);
     }
+
+
 
     private int computeScore(final Request request,
                              final DatabaseReference requestRef,

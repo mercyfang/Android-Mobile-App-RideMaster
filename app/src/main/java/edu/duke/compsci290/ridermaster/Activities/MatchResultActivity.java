@@ -36,14 +36,23 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 //        FrameLayout activityContainer = findViewById(R.id.activity_content);
 //        View.inflate(this, R.layout.activity_match_result, activityContainer);
 
-        final SharedPreferences sharedPref = getSharedPreferences("UserPathInfoMostRecent", Context.MODE_PRIVATE);
 
 
         //if found match put in the TextView
+        //retrieve intent
+        Bundle extras = getIntent().getExtras();
+        if (extras != null){
+            String uid = extras.getString("uid");
+        }else{
+
+        }
+
+
+
         mStatusText = findViewById(R.id.match_status_text_view);
         //MERCY
-        String email = sharedPref.getString("userEmail","none");
-        updateStatusTextView(email);
+
+        updateStatusTextView("email");
 
 
 
