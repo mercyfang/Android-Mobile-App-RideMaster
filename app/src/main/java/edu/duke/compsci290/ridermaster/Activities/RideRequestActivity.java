@@ -282,6 +282,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 // Writes user and request data into Firebase Realtime Database.
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                 Request request = new Request(
                         firebaseUser.getUid(),
                         mDatePicker.getText().toString(),
@@ -293,6 +294,23 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         mDestinationTextView.getText().toString(),
                         mDestinationRangeTextView.getText().toString().split(" ")[0]
                 );
+
+                //save argument data in sharedpreferences to pass on to matchResultActivity
+                SharedPreferences sharedPref = getSharedPreferences("UserPathInfoMostRecent", Context.MODE_PRIVATE);
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("uid",firebaseUser.getUid());
+                editor.putString("data",mDatePicker.getText().toString());
+                editor.putString("startTime",mBeginTimeTextView.getText().toString());
+                editor.putString("endTime",mBeginTimeTextView.getText().toString());
+                editor.putString("location",mLocationTextView.getText().toString());
+                editor.putString("distanceFromUser",mUserRangeTextView.getText().toString().split(" ")[0]);
+                editor.putString("destination", mDestinationTextView.getText().toString());
+                editor.putString("distanceFromDestination",mDestinationRangeTextView.getText().toString().split(" ")[0]);
+
+                editor.commit();
+
+
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
                         new FirebaseDatabaseReaderWriter();
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
@@ -301,11 +319,14 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 User user;
                 try {
                     user = finder.findMatches(request);
+                    String userEmail = user.email;
+                    editor.putString("email", userEmail);
+                    editor.commit();
+
                 } catch (NoSuchElementException e) {
-                    Toast.makeText(RideRequestActivity.this,
-                            "No match is found. Maybe try different time slots, or try again later?",
-                            Toast.LENGTH_SHORT).show();
-                    return;
+                    //no match found
+                    editor.putString("email", "none");
+                    editor.commit();
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);

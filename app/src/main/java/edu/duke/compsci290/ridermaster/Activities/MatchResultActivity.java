@@ -7,21 +7,36 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
+import FirebaseDatabase.FindMatches;
+import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+import FirebaseDatabase.Request;
+import FirebaseDatabase.User;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
+
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MatchResultActivity extends BaseNavDrawerActivity {
 
     ArrayList<LatLng> pickUpPointsLatLng = new ArrayList<>();
 
-
-
     private Button mBackButton;
+    private Button mNewMatchButton;
+    private Button mNewTripButton;
+    private TextView mStatusText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,79 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         // Sets activity main view.
         FrameLayout activityContainer = findViewById(R.id.activity_content);
         View.inflate(this, R.layout.activity_match_result, activityContainer);
+
+        final SharedPreferences sharedPref = getSharedPreferences("UserPathInfoMostRecent", Context.MODE_PRIVATE);
+
+
+        //if found match put in the TextView
+        mStatusText = findViewById(R.id.match_status_text_view);
+        String email = sharedPref.getString("userEmail","none");
+        updateStatusTextView(email);
+
+
+
+        //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
+
+
+        //set my new match button for the same trip, should just find new user with same time/loc info
+        mNewMatchButton = findViewById(R.id.request_another_user_button);
+        mNewMatchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Writes user and request data into Firebase Realtime Database.
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                //get info from shared argument
+                String uid = sharedPref.getString("uid","none");
+                String data = sharedPref.getString("data","none");
+                String startTime= sharedPref.getString( "startTime","none");
+                String endTime = sharedPref.getString( "endTime","none");
+                String location = sharedPref.getString( "location","none");
+                String distanceFromUser = sharedPref.getString("distanceFromUser" ,"none");
+                String destination = sharedPref.getString( "destination","none");
+                String distanceFromDestination = sharedPref.getString( "distanceFromDestination","none");
+
+                //check if data is there
+                if (uid.equals("none") || data.equals("none") || startTime.equals("none") || endTime.equals("none") ||
+                        location.equals("none") || distanceFromDestination.equals("none") || distanceFromUser.equals("none") ||
+                        destination.equals("none") ) {
+
+
+                    Toast.makeText(MatchResultActivity.this,
+                            "Failed to request same match, please click cancel to enter your information",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Request request = new Request(uid, data, startTime, endTime, location, distanceFromUser,
+                        destination, distanceFromDestination);
+
+                FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
+                        new FirebaseDatabaseReaderWriter();
+                firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
+
+                FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
+                User user;
+                try {
+                    user = finder.findMatches(request);
+                } catch (NoSuchElementException e) {
+
+                    return;
+                }
+
+                Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
+                // TODO: passes objects to another activity using Parcelable or Serializable class.
+                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), user);
+                startActivity(intent);
+            }
+        });
+
+
+        //set my new trip button for going back to request for new trip
+
+
+        //set my Back Button
         mBackButton = findViewById(R.id.match_result_back_button);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +149,14 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         editor = UtilityFunctions.putDouble(editor, "PickUp Location Longitude", pickUpPointsLatLng.get(0).longitude);
         editor.commit();
 
+    }
+
+    public void updateStatusTextView(String userEmail){
+        if (userEmail.equals("none") || userEmail.equals("") || userEmail == null){
+            mStatusText.setText("No Match Found");
+        }else{
+            mStatusText.setText("Found Match: " + userEmail);
+        }
     }
 
 
