@@ -382,8 +382,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 try {
                     //MERCY DELETE HERE
                     user = finder.findMatches(request);
-                    String userEmail = user.email;
-                    editor.putString("email", userEmail);
+                    editor.putString("email", "email");
                     editor.commit();
 
                 } catch (NoSuchElementException e) {
