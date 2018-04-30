@@ -1,17 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:targetApi="26"
     android:layout_width="match_parent"
+    android:id="@+id/base_navigation_drawer_layout"
     android:layout_height="match_parent"
     tools:context=".Activities.RideRequestActivity">
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/navigation_drawer"
+        app:headerLayout="@layout/navigation_header" >
+
+    </android.support.design.widget.NavigationView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#94b9db"
         android:paddingBottom="40dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/navigation_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintTop_toTopOf="parent"/>
+
 
 
 
@@ -19,7 +47,7 @@
             android:layout_width="380dp"
             android:layout_height="wrap_content"
             android:background="@drawable/blue_100_rect"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/navigation_toolbar"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="10dp"
             app:layout_constraintRight_toRightOf="parent"
@@ -732,7 +760,7 @@
                 android:layout_height="0dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:id="@+id/leftMarginBox5"
+                android:id="@+id/leftMarginBox6"
                 />
 
             <View
@@ -740,7 +768,7 @@
                 android:layout_height="0dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toRightOf="parent"
-                android:id="@+id/rightMarginBox5"
+                android:id="@+id/rightMarginBox6"
                 />
 
 
@@ -748,8 +776,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign Out"
-                app:layout_constraintRight_toLeftOf="@id/rightMarginBox5"
-                app:layout_constraintLeft_toRightOf="@id/leftMarginBox5"
+                app:layout_constraintRight_toLeftOf="@id/rightMarginBox6"
+                app:layout_constraintLeft_toRightOf="@id/leftMarginBox6"
                 app:layout_constraintTop_toTopOf="parent"
                 android:textColor="@color/white"
                 android:fontFamily="@font/opensans_light"
@@ -767,4 +795,8 @@
 
     </android.support.constraint.ConstraintLayout>
 
-</ScrollView>
+    </ScrollView>
+
+
+
+</android.support.v4.widget.DrawerLayout>

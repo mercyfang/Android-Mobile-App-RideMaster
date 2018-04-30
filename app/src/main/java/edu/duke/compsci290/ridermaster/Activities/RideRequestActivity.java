@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -96,16 +97,23 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private double myDestinationLat;
     private double myDestinationLng;
 
-
+    DrawerLayout mDrawerLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, R.layout.activity_ride_request);
 
         loadData();
         // Sets activity main view.
-        setContentView(R.layout.activity_ride_request);
+
+
+
+
+
+
+
 
         mDatePicker = findViewById(R.id.choose_date_field_text_view);
         mCalendarButton = findViewById(R.id.calendarButton);

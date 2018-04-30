@@ -22,10 +22,12 @@
             </intent-filter>
 
 
+
         </activity>
         <activity
             android:name=".Activities.RideRequestActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+
 
 
         </activity>
