@@ -1,8 +1,11 @@
 package edu.duke.compsci290.ridermaster.Activities;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,16 +22,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.NoSuchElementException;
 
 import FirebaseDatabase.FindMatches;
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
 import FirebaseDatabase.Request;
 import FirebaseDatabase.User;
-
+import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
-public class RideRequestActivity extends BaseNavDrawerActivity {
+public class RideRequestActivity2 extends BaseNavDrawerActivity {
+
+    private String startingLocText;
+    private String destinationLocText;
 
     private final String timePrompt = "Choose a time";
     private final String locationPrompt = "Choose a location";
@@ -38,9 +43,9 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private Spinner mStartTimeSpinner;
     private Spinner mEndTimeSpinner;
-    private Spinner mLocationSpinner;
+    private TextView mLocationTextView;
     private Spinner mDistanceFromUserSpinner;
-    private Spinner mDestinationSpinner;
+    private TextView mDistanceTextView;
     private Spinner mDistanceFromDestSpinner;
 
     private Button mEnableGoogleMapButton;
@@ -51,21 +56,26 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private Button mSignOutButton;
 
     private Calendar mCalendar;
+    private static final String TAG = "RideRequestActivity2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        loadData();
+
         // Sets activity main view.
         FrameLayout activityContainer = findViewById(R.id.activity_content);
-        View.inflate(this, R.layout.activity_ride_request, activityContainer);
+        View.inflate(this, R.layout.activity_ride_request2, activityContainer);
 
         mDatePicker = findViewById(R.id.choose_date_field_text_view);
         mStartTimeSpinner = findViewById(R.id.start_time_spinner);
         mEndTimeSpinner = findViewById(R.id.end_time_spinner);
-        mLocationSpinner = findViewById(R.id.location_spinner);
+        mLocationTextView = findViewById(R.id.user_location_text_view);
+        mLocationTextView.setText(startingLocText);
         mDistanceFromUserSpinner = findViewById(R.id.distance_from_user_spinner);
-        mDestinationSpinner = findViewById(R.id.destination_spinner);
+        mDistanceTextView = findViewById(R.id.user_destination_text_view);
+        mDistanceTextView.setText(destinationLocText);
         mDistanceFromDestSpinner = findViewById(R.id.distance_from_dest_spinner);
 
         mEnableGoogleMapButton = findViewById(R.id.google_map_location_button);
@@ -89,7 +99,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             @Override
             public void onClick(View v) {
                 DatePickerDialog datePickerdialog =  new DatePickerDialog(
-                        RideRequestActivity.this,
+                        RideRequestActivity2.this,
                         date,
                         mCalendar.get(Calendar.YEAR),
                         mCalendar.get(Calendar.MONTH),
@@ -100,10 +110,11 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             }
         });
 
+
         mEnableGoogleMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RideRequestActivity.this, MapActivity.class);
+                Intent intent = new Intent(RideRequestActivity2.this, MapActivity.class);
                 startActivity(intent);
             }
         });
@@ -112,12 +123,12 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             @Override
             public void onClick(View v) {
                 if (!verifyMatchInputs()) {
-                    Toast.makeText(RideRequestActivity.this, "Please fill out all information",
+                    Toast.makeText(RideRequestActivity2.this, "Please fill out all information",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!verifyTime()) {
-                    Toast.makeText(RideRequestActivity.this,
+                    Toast.makeText(RideRequestActivity2.this,
                             "Please make sure your end time is after your start time",
                             Toast.LENGTH_SHORT).show();
                     return;
@@ -130,22 +141,20 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         mDatePicker.getText().toString(),
                         mStartTimeSpinner.getSelectedItem().toString(),
                         mEndTimeSpinner.getSelectedItem().toString(),
-                        mLocationSpinner.getSelectedItem().toString(),
+                        mLocationTextView.getText().toString(),
                         // Only stores the miles number into request.
                         mDistanceFromUserSpinner.getSelectedItem().toString().split(" ")[1],
-                        mDestinationSpinner.getSelectedItem().toString(),
+                        mDistanceTextView.getText().toString(),
                         mDistanceFromDestSpinner.getSelectedItem().toString().split(" ")[1]
                 );
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
                         new FirebaseDatabaseReaderWriter();
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
-                FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
-                User user;
-                try {
-                    user = finder.findMatches(request);
-                } catch (NoSuchElementException e) {
-                    Toast.makeText(RideRequestActivity.this,
+                ArrayList<User> users =
+                        FindMatches.findMatches(firebaseUser.getUid(), request.getRequestId());
+                if (users.isEmpty()) {
+                    Toast.makeText(RideRequestActivity2.this,
                             "No match is found. Maybe try different time slots, or try again later?",
                             Toast.LENGTH_SHORT).show();
                     return;
@@ -153,7 +162,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
                 // TODO: passes objects to another activity using Parcelable or Serializable class.
-                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), user);
+                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), users);
                 startActivity(intent);
             }
         });
@@ -190,14 +199,17 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         mStartTimeSpinner.setSelection(0);
         mEndTimeSpinner.setAdapter(timeAdapter);
         mEndTimeSpinner.setSelection(0);
-        mLocationSpinner.setAdapter(locationAdapter);
-        mLocationSpinner.setSelection(0);
+//        mLocationTextView.setAdapter(locationAdapter);
+//        mLocationTextView.setSelection(0);
         mDistanceFromUserSpinner.setAdapter(distanceAdapter);
         mDistanceFromUserSpinner.setSelection(0);
-        mDestinationSpinner.setAdapter(destinationAdapter);
-        mDestinationSpinner.setSelection(0);
+//        mDistanceTextView.setAdapter(destinationAdapter);
+//        mDistanceTextView.setSelection(0);
         mDistanceFromDestSpinner.setAdapter(distanceAdapter);
         mDistanceFromDestSpinner.setSelection(0);
+
+
+
     }
 
     @Override
@@ -258,13 +270,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     }
 
     private boolean verifyMatchInputs() {
-        if (mDatePicker.getText().toString().equals(getString(R.string.choose_a_date))
+        if (mDatePicker.getText().toString().equals(R.string.choose_a_date)
                 || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
                 || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
-                || mLocationSpinner.getSelectedItem().toString().equals(locationPrompt)
                 || mDistanceFromUserSpinner.getSelectedItem().toString().equals(distancePrompt)
-                || mDestinationSpinner.getSelectedItem().toString().equals(locationPrompt)
                 || mDistanceFromDestSpinner.getSelectedItem().toString().equals(distancePrompt)) {
+            Log.d(TAG, "verifyMatchInputs: " + timePrompt + ":" + mEndTimeSpinner.getSelectedItem().toString());
+            Log.d(TAG, "verifyMatchInputs: " + timePrompt + ":" + mStartTimeSpinner.getSelectedItem().toString());
+            Log.d(TAG, "verifyMatchInputs: " + distancePrompt + ":" + mDistanceFromUserSpinner.getSelectedItem().toString());
+            Log.d(TAG, "verifyMatchInputs: " + distancePrompt + ":" + mDistanceFromDestSpinner.getSelectedItem().toString());
+
             return false;
         }
         return true;
@@ -278,4 +293,20 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         }
         return true;
     }
+
+    private void loadData(){
+        SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        double myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);
+        double myStartingLng = UtilityFunctions.getDouble(sharedPref, "Starting Location Longitude", 0);
+        startingLocText = sharedPref.getString("Starting Location Text", "Durham");
+        double myDestinationLat = UtilityFunctions.getDouble(sharedPref, "Destination Location Latitude", 0);
+        double myDestinationLng = UtilityFunctions.getDouble(sharedPref, "Destination Location Longitude", 0);
+        destinationLocText = sharedPref.getString("Destination Location Text", "Raleigh");
+        Log.d(TAG, "loadData: " + myStartingLat + myStartingLng + startingLocText +
+                myDestinationLat + myDestinationLng + destinationLocText);
+        Log.d(TAG, "saveInfo: "+ sharedPref.getAll().toString());
+    }
+
 }

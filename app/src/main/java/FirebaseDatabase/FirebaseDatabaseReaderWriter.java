@@ -129,7 +129,9 @@ public class FirebaseDatabaseReaderWriter {
         //      startTime
         //      endTime
         //      location
+        //      distanceFromUser
         //      destination
+        //      distanceFromDest
         //      isMatched
         //  }
         //  requestId2 {
