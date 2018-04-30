@@ -14,21 +14,17 @@ public class Request {
     public String startTime;
     public String endTime;
     public String location;
-    public String distanceFromUser;
     public String destination;
-    public String distanceFromDest;
     public boolean isMatched;
 
     public Request(String uId, String date, String startTime, String endTime, String location,
-                   String distanceFromUser, String destination, String distanceFromDest) {
+                   String destination) {
         this.uId = uId;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
-        this.distanceFromUser = distanceFromUser;
         this.destination = destination;
-        this.distanceFromDest = distanceFromDest;
         isMatched = false;
     }
 
