@@ -2,7 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
-            android:id="@+id/nav_item_one"
-            android:title="Item 1" />
+            android:id="@+id/nav_account"
+            android:title="account" />
+        <item
+            android:id="@+id/nav_ride_history"
+            android:title="ride history" />
+        <item
+            android:id="@+id/nav_find_ride"
+            android:title="find new ride" />
+        <item
+            android:id="@+id/nav_sign_out"
+            android:title="sign out" />
     </group>
 </menu>
