@@ -59,7 +59,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
 
-
+/*
         //set my new match button for the same trip, should just find new user with same time/loc info
         mNewMatchButton = findViewById(R.id.request_another_user_button);
         mNewMatchButton.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +113,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
                 startActivity(intent);
             }
         });
-
+*/
 
         //set my new trip button for going back to request for new trip
 

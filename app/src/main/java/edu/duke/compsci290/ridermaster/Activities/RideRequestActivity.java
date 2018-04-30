@@ -363,12 +363,12 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("uid",firebaseUser.getUid());
                 editor.putString("data",mDatePicker.getText().toString());
-                editor.putString("startTime",mBeginTimeTextView.getText().toString());
-                editor.putString("endTime",mBeginTimeTextView.getText().toString());
-                editor.putString("location",mLocationTextView.getText().toString());
-                editor.putString("distanceFromUser",mUserRangeTextView.getText().toString().split(" ")[0]);
-                editor.putString("destination", mDestinationTextView.getText().toString());
-                editor.putString("distanceFromDestination",mDestinationRangeTextView.getText().toString().split(" ")[0]);
+                editor.putString("startTime",String.format("%02d:%02d", startTimeHours, startTimeMinutes));
+                editor.putString("endTime",String.format("%02d:%02d", endTimeHours, endTimeMinutes));
+                editor.putString("location",String.format("%f.%f", myStartingLat , myStartingLng));
+                editor.putString("distanceFromUser",String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)));
+                editor.putString("destination", String.format("%f.%f", myDestinationLat, myDestinationLng));
+                editor.putString("distanceFromDestination",String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69)));
 
                 editor.commit();
 

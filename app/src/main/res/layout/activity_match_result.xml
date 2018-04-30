@@ -36,7 +36,7 @@
             app:layout_constraintRight_toRightOf="parent"
 
 
-            app:layout_constraintTop_toBottomOf="@id/request_another_user_button">
+            app:layout_constraintTop_toBottomOf="@id/match_status_text_view">
 
             <TextView
                 android:id="@+id/request_another_trip_text_view"
@@ -73,6 +73,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+   <!--
         <android.support.constraint.ConstraintLayout
 
             android:id="@+id/request_another_user_button"
@@ -107,7 +108,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>-->
 
         <android.support.constraint.ConstraintLayout
 
