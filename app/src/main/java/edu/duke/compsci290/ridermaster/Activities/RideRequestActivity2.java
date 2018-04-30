@@ -23,10 +23,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-import FirebaseDatabase.FindMatches;
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
 import FirebaseDatabase.Request;
-import FirebaseDatabase.User;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -151,21 +149,21 @@ public class RideRequestActivity2 extends BaseNavDrawerActivity {
                         new FirebaseDatabaseReaderWriter();
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
-                ArrayList<User> users =
-                        FindMatches.findMatches(firebaseUser.getUid(), request.getRequestId());
-                if (users.isEmpty()) {
-                    Toast.makeText(RideRequestActivity2.this,
-                            "No match is found. Maybe try different time slots, or try again later?",
-                            Toast.LENGTH_SHORT).show();
+//                ArrayList<User> users =
+//                        FindMatches.findMatches(firebaseUser.getUid(), request.getRequestId());
+//                if (users.isEmpty()) {
+//                    Toast.makeText(RideRequestActivity2.this,
+//                            "No match is found. Maybe try different time slots, or try again later?",
+//                            Toast.LENGTH_SHORT).show();
                     return;
-                }
+                //}
 
-                Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
-                // TODO: passes objects to another activity using Parcelable or Serializable class.
-                // intent.putExtra(getApplicationContext().getString(R.string.matchResult), users);
-                startActivity(intent);
-            }
-        });
+        //Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
+        // TODO: passes objects to another activity using Parcelable or Serializable class.
+        // intent.putExtra(getApplicationContext().getString(R.string.matchResult), users);
+        //startActivity(intent);
+    }
+});
 
         // TODO: remove later.
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
