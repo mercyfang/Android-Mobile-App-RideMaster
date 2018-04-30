@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate: huhhb");
 
         mLogInButton = this.findViewById(R.id.log_in_button);
         mSignUpButton = this.findViewById(R.id.sign_up_button);
