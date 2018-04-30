@@ -6,28 +6,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
-import FirebaseDatabase.FindMatches;
-import FirebaseDatabase.FirebaseDatabaseReaderWriter;
-import FirebaseDatabase.Request;
-import FirebaseDatabase.User;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
-
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class MatchResultActivity extends BaseNavDrawerActivity {
 
@@ -44,10 +30,11 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         populatePickUpPoints();
         super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState, R.layout.activity_match_result);
 
         // Sets activity main view.
-        FrameLayout activityContainer = findViewById(R.id.activity_content);
-        View.inflate(this, R.layout.activity_match_result, activityContainer);
+//        FrameLayout activityContainer = findViewById(R.id.activity_content);
+//        View.inflate(this, R.layout.activity_match_result, activityContainer);
 
         final SharedPreferences sharedPref = getSharedPreferences("UserPathInfoMostRecent", Context.MODE_PRIVATE);
 
