@@ -380,6 +380,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
                 User user;
                 try {
+                    //MERCY DELETE HERE
                     user = finder.findMatches(request);
                     String userEmail = user.email;
                     editor.putString("email", userEmail);

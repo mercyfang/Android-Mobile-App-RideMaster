@@ -52,6 +52,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
         //if found match put in the TextView
         mStatusText = findViewById(R.id.match_status_text_view);
+        //MERCY
         String email = sharedPref.getString("userEmail","none");
         updateStatusTextView(email);
 
