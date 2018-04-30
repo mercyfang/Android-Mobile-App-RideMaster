@@ -525,7 +525,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private void loadData(){
         SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
 
-
         SharedPreferences.Editor editor = sharedPref.edit();
         myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);
         myStartingLng = UtilityFunctions.getDouble(sharedPref, "Starting Location Longitude", 0);
