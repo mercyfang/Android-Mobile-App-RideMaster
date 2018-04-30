@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {
             // TODO: updates UI if no user is signed in.
         } else {
-            Intent intent = new Intent(getApplicationContext(), RideRequestActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MapActivity.class);
             getApplicationContext().startActivity(intent);
         }
     }

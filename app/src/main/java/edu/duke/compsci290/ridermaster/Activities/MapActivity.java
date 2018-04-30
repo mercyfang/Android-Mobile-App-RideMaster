@@ -154,7 +154,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 saveInfo();
-                Intent intent = new Intent(MapActivity.this, RideRequestActivity2.class);
+                Intent intent = new Intent(MapActivity.this, RideRequestActivity.class);
                 startActivity(intent);
             }
         });
@@ -346,7 +346,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         hideSoftKeyboard();
 
         //@Todo remove
-        geoLocatePickUp();
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -457,15 +457,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     //@Todo Remove
-    private void geoLocatePickUp(){
-        LatLng latlng1 = new LatLng(pickUpLatLng.latitude, pickUpLatLng.longitude);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds(pickUpLatLng, pickUpLatLng) ,100));
-        MarkerOptions options2 = new MarkerOptions()
-                .position(pickUpLatLng);
-        mMap.addMarker(options2);
-        hideSoftKeyboard();
-    }
 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: getting the devicescurrent location"); //@Todo Logger

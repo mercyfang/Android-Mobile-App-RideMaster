@@ -24,9 +24,6 @@
         </activity>
         <activity
             android:name=".Activities.RideRequestActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".Activities.RideRequestActivity2"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
 
         </activity>
