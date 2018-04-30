@@ -109,6 +109,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintTop_toBottomOf="@id/relLayout2"
         android:src="@drawable/ic_map"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -119,7 +120,8 @@
         android:layout_marginTop="15dp"
         android:scaleType="centerCrop"
         android:id="@+id/place_info"
-        android:src="@drawable/ic_info"/>
+        android:src="@drawable/ic_info"
+        android:visibility="gone"/>
 
     <Button
         android:layout_width="100dp"

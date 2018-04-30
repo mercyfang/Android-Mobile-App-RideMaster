@@ -1,18 +1,20 @@
 package edu.duke.compsci290.ridermaster.Activities;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +30,6 @@ import FirebaseDatabase.FindMatches;
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
 import FirebaseDatabase.Request;
 import FirebaseDatabase.User;
-
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -42,24 +43,37 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private final String distancePrompt = "Within -- miles";
 
     private TextView mDatePicker;
+    private ConstraintLayout mCalendarButton;
 
-    private Spinner mStartTimeSpinner;
-    private Spinner mEndTimeSpinner;
+    private ConstraintLayout mBeginTimeButton;
+    private TextView mBeginTimeTextView;
+
+    private ConstraintLayout mEndTimeButton;
+    private TextView mEndTimeTextView;
+
+    private ConstraintLayout mUserRangeButton;
+    private TextView mUserRangeTextView;
+
+    private ConstraintLayout mDestinationRangeButton;
+    private TextView mDestinationRangeTextView;
+
     private TextView mLocationTextView;
-    private Spinner mDistanceFromUserSpinner;
     private TextView mDestinationTextView;
-    private Spinner mDistanceFromDestSpinner;
 
-    private Button mEnableGoogleMapButton;
-    private Button mFindDestinationButton;
-    private Button mSubmitButton;
-    // Only for developer purpose.
-    // TODO: remove later.
-    private Button mSignOutButton;
+    private ConstraintLayout mEnableGoogleMapButton;
+    private ConstraintLayout mFindMatchesButton;
+
+    private ConstraintLayout mSignOutButton;
 
     private Calendar mCalendar;
 
+    private int startTime;
+    private int endTime;
+
+
     private static final String TAG = "RideRequestActivity";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,26 +81,61 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
         loadData();
         // Sets activity main view.
-        FrameLayout activityContainer = findViewById(R.id.activity_content);
-        View.inflate(this, R.layout.activity_ride_request, activityContainer);
+        setContentView(R.layout.activity_ride_request);
+
 
         mDatePicker = findViewById(R.id.choose_date_field_text_view);
-        mStartTimeSpinner = findViewById(R.id.start_time_spinner);
-        mEndTimeSpinner = findViewById(R.id.end_time_spinner);
+        mCalendarButton = findViewById(R.id.calendarButton);
+
+        mBeginTimeButton = findViewById(R.id.beginTimeButton);
+        mBeginTimeTextView = findViewById(R.id.choose_begin_time_field_text_view);
+
+        mEndTimeButton = findViewById(R.id.endTimeButton);
+        mEndTimeTextView = findViewById(R.id.choose_end_time_field_text_view);
+
+        mUserRangeButton = findViewById(R.id.user_range_button);
+        mUserRangeTextView = findViewById(R.id.user_range_value_text_view);
+
+        mDestinationRangeButton = findViewById(R.id.destination_range_button);
+        mDestinationRangeTextView = findViewById(R.id.destination_range_value_text_view);
+
         mLocationTextView = findViewById(R.id.user_location_text_view);
-        mDistanceFromUserSpinner = findViewById(R.id.distance_from_user_spinner);
-
         mDestinationTextView = findViewById(R.id.user_destination_text_view);
-        mDistanceFromDestSpinner = findViewById(R.id.distance_from_dest_spinner);
-
-        mEnableGoogleMapButton = findViewById(R.id.google_map_location_button);
-        mFindDestinationButton = findViewById(R.id.find_destination_button);
-        mSubmitButton = findViewById(R.id.find_a_share_button);
+        mEnableGoogleMapButton = findViewById(R.id.backToMapButton);
+        mFindMatchesButton = findViewById(R.id.findMatchesButton);
         // TODO: remove later.
         mSignOutButton = findViewById(R.id.sign_out_button);
 
         mLocationTextView.setText(startingLocText);
         mDestinationTextView.setText(destinationLocText);
+
+        try {
+            String[] f = getAssets().list("");
+            for (String f1 : f) {
+
+                Log.v("names", f1);
+            }
+        }catch(Exception e){
+
+        }
+
+//        Typeface myCustomFont = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Light.tff");
+//
+//
+//
+//        mLocationTextView.setTypeface(myCustomFont);
+//
+//        mDestinationTextView.setTypeface(myCustomFont);
+//
+//        mEnableGoogleMapButton.setTypeface(myCustomFont);
+//        mFindDestinationButton.setTypeface(myCustomFont);
+//        mFindMatchesButton.setTypeface(myCustomFont);
+//        // TODO: remove later.
+//        mSignOutButton.setTypeface(myCustomFont);
+
+        mLocationTextView.setText(startingLocText);
+        mDestinationTextView.setText(destinationLocText);
+
 
         // Creates DatePicker Dialog.
         mCalendar = Calendar.getInstance();
@@ -99,7 +148,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 updateLabel();
             }
         };
-        mDatePicker.setOnClickListener(new View.OnClickListener() {
+        mCalendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerDialog datePickerdialog =  new DatePickerDialog(
@@ -114,6 +163,108 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             }
         });
 
+        final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                int hour = view.getHour() % 12;
+                String timeOfDay = "";
+                if(view.getHour() > 12){
+                    timeOfDay = "PM";
+                }else{
+                    timeOfDay = "AM";
+                }
+
+                startTime = view.getHour() * 60 + view.getMinute();
+
+                updateBeginTime(String.format("%d:%.2d %s", hour, view.getMinute(), timeOfDay));
+
+            }
+        };
+        mBeginTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog =  new TimePickerDialog(
+                        RideRequestActivity.this,
+                        time,
+                        mCalendar.get(Calendar.HOUR_OF_DAY),
+                        mCalendar.get(Calendar.MINUTE),
+                        false);
+                // Disables past dates in date picker.
+
+                timePickerDialog.show();
+            }
+        });
+
+        final TimePickerDialog.OnTimeSetListener time2 = new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                int hour = view.getHour() % 12;
+                String timeOfDay = "";
+                if(view.getHour() > 12){
+                    timeOfDay = "PM";
+                }else{
+                    timeOfDay = "AM";
+                }
+
+                endTime = view.getHour()*60 + view.getMinute();
+
+                updateEndTime(String.format("%d:%.2d %s", hour, view.getMinute(), timeOfDay));
+
+            }
+        };
+        mEndTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog =  new TimePickerDialog(
+                        RideRequestActivity.this,
+                        time2,
+                        mCalendar.get(Calendar.HOUR_OF_DAY),
+                        mCalendar.get(Calendar.MINUTE),
+                        false);
+                // Disables past dates in date picker.
+
+                timePickerDialog.show();
+            }
+        });
+
+        mUserRangeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final CharSequence distances[] = new CharSequence[] {"Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles", "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
+                builder.setTitle("How far away can your match be?");
+                builder.setItems(distances, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateUserRange(distances[which].toString().replace("Within", ""));
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        mDestinationRangeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final CharSequence distances[] = new CharSequence[] {"Within 0.1 miles", "Within 0.3 miles", "Within 0.7 miles", "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
+                builder.setTitle("How far can your match's Destination be?");
+                builder.setItems(distances, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateDestinationRange(distances[which].toString().replace("Within", ""));
+                    }
+                });
+                builder.show();
+            }
+        });
+
+
         mEnableGoogleMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +273,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
             }
         });
 
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+        mFindMatchesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!verifyMatchInputs()) {
@@ -142,13 +293,13 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 Request request = new Request(
                         firebaseUser.getUid(),
                         mDatePicker.getText().toString(),
-                        mStartTimeSpinner.getSelectedItem().toString(),
-                        mEndTimeSpinner.getSelectedItem().toString(),
+                        mBeginTimeTextView.getText().toString(),
+                        mBeginTimeTextView.getText().toString(),
                         mLocationTextView.getText().toString(),
                         // Only stores the miles number into request.
-                        mDistanceFromUserSpinner.getSelectedItem().toString().split(" ")[1],
+                        mUserRangeTextView.getText().toString().split(" ")[0],
                         mDestinationTextView.getText().toString(),
-                        mDistanceFromDestSpinner.getSelectedItem().toString().split(" ")[1]
+                        mDestinationRangeTextView.getText().toString().split(" ")[0]
                 );
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
                         new FirebaseDatabaseReaderWriter();
@@ -200,16 +351,8 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, destinations);
         destinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        mStartTimeSpinner.setAdapter(timeAdapter);
-        mStartTimeSpinner.setSelection(0);
-        mEndTimeSpinner.setAdapter(timeAdapter);
-        mEndTimeSpinner.setSelection(0);
 
-        mDistanceFromUserSpinner.setAdapter(distanceAdapter);
-        mDistanceFromUserSpinner.setSelection(0);
 
-        mDistanceFromDestSpinner.setAdapter(distanceAdapter);
-        mDistanceFromDestSpinner.setSelection(0);
     }
 
     @Override
@@ -221,6 +364,24 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         String dateFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.US);
         mDatePicker.setText(sdf.format(mCalendar.getTime()));
+    }
+
+    private void updateBeginTime(String s) {
+
+        mBeginTimeTextView.setText(s);
+    }
+
+    private void updateEndTime(String s) {
+
+        mEndTimeTextView.setText(s);
+    }
+
+    private void updateUserRange(String s){
+        mUserRangeTextView.setText(s);
+    }
+
+    private void updateDestinationRange(String s){
+        mDestinationRangeTextView.setText(s);
     }
 
     private ArrayList<String> getTimeSpinnerElements() {
@@ -271,12 +432,12 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private boolean verifyMatchInputs() {
         if (mDatePicker.getText().toString().equals(getString(R.string.choose_a_date))
-                || mEndTimeSpinner.getSelectedItem().toString().equals(timePrompt)
-                || mStartTimeSpinner.getSelectedItem().toString().equals(timePrompt)
-                || mLocationTextView.getText().toString().equals("")
-                || mDistanceFromUserSpinner.getSelectedItem().toString().equals(distancePrompt)
-                || mDestinationTextView.getText().toString().equals("")
-                || mDistanceFromDestSpinner.getSelectedItem().toString().equals(distancePrompt)) {
+                || mBeginTimeTextView.getText().toString().equals(R.string.begin_time_prompt)
+                || mEndTimeTextView.getText().toString().equals(R.string.end_time_prompt)
+                || mLocationTextView.getText().toString().equals(R.string.starting_point_prompt)
+                || mDestinationTextView.getText().toString().equals(R.string.ending_point_prompt)
+                || mUserRangeTextView.toString().equals(R.string.choose_miles_prompt)
+                || mDestinationRangeTextView.toString().equals(R.string.choose_miles_prompt)) {
             return false;
         }
         return true;
@@ -284,8 +445,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     // Verifies user input end time is the same as, or after start time.
     private boolean verifyTime() {
-        if (mEndTimeSpinner.getSelectedItem().toString().compareTo(
-                mStartTimeSpinner.getSelectedItem().toString()) < 0) {
+        if (endTime < startTime) {
             return false;
         }
         return true;

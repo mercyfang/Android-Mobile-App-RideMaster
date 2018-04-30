@@ -1,124 +1,770 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="26"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
+    android:layout_height="match_parent"
+    tools:context=".Activities.RideRequestActivity">
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="#94b9db"
+        android:paddingBottom="40dp">
 
-        <TextView
-            android:id="@+id/time_text_view"
-            android:layout_width="wrap_content"
+
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="380dp"
             android:layout_height="wrap_content"
-            android:text="Time"
-            android:textSize="22sp" />
+            android:background="@drawable/blue_100_rect"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="10dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/dateBox"
+            android:paddingBottom="20dp"
 
-        <TextView
-            android:id="@+id/date_text_view"
-            android:layout_width="wrap_content"
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox1"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox1"
+                />
+
+            <TextView
+                android:id="@+id/date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:fontFamily="@font/opensans_light"
+                android:textColor="@color/white"
+                android:textSize="26dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox1"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/calendarButton"
+                app:layout_constraintTop_toBottomOf="@id/date_text_view"
+                app:layout_constraintLeft_toLeftOf="@id/date_text_view"
+                app:layout_constraintLeft_toRightOf="@id/rightMarginBox1"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:clickable="true"
+
+
+                >
+
+                <TextView
+                    android:id="@+id/choose_date_field_text_view"
+                    android:text="@string/choose_a_date"
+                    android:fontFamily="@font/opensans_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/calendar"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+         </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="380dp"
             android:layout_height="wrap_content"
-            android:text="Date" />
+            android:background="@drawable/blue_90_rect"
+            app:layout_constraintTop_toBottomOf="@id/dateBox"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/TimeBox"
 
-        <TextView
-            android:id="@+id/choose_date_field_text_view"
+            android:paddingBottom="20dp"
+
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox2"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox2"
+                />
+
+            <TextView
+                android:id="@+id/time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="26dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox2"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/begin_time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Begin"
+                android:paddingBottom="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox2"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="@id/time_text_view"
+
+
+
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/beginTimeButton"
+                app:layout_constraintTop_toBottomOf="@id/begin_time_text_view"
+                app:layout_constraintLeft_toLeftOf="@id/time_text_view"
+                app:layout_constraintLeft_toRightOf="@id/rightMarginBox2"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:clickable="true"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/choose_begin_time_field_text_view"
+                    android:text="@string/begin_time_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_icon"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/end_time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                android:paddingBottom="5dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox2"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="@id/beginTimeButton"
+
+
+
+                />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/endTimeButton"
+                app:layout_constraintTop_toBottomOf="@id/end_time_text_view"
+                app:layout_constraintLeft_toLeftOf="@id/time_text_view"
+                app:layout_constraintLeft_toRightOf="@id/rightMarginBox2"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:clickable="true"
+                android:paddingRight="10dp"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/choose_end_time_field_text_view"
+                    android:text="@string/end_time_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    android:fontFamily="@font/opensans_light"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_icon"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_80_rect"
+            app:layout_constraintTop_toBottomOf="@id/TimeBox"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/LocationBox"
+
+            android:paddingBottom="20dp"
+
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox3"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox3"
+                />
+
+            <TextView
+                android:id="@+id/location_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="26dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox3"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/starting_location_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Starting"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                android:paddingBottom="5dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox3"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="@id/location_text_view"
+
+
+
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/lightBox4"
+                app:layout_constraintTop_toBottomOf="@id/starting_location_text_view"
+                app:layout_constraintLeft_toLeftOf="@id/starting_location_text_view"
+                app:layout_constraintLeft_toRightOf="@id/rightMarginBox3"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/user_location_text_view"
+                    android:text="@string/starting_point_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+
+
+
+
+            </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/destination_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Destination"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox3"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                app:layout_constraintTop_toBottomOf="@id/lightBox4"
+
+
+
+                />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/lightBox5"
+                app:layout_constraintTop_toBottomOf="@id/destination_textView"
+                app:layout_constraintLeft_toLeftOf="@id/destination_textView"
+                app:layout_constraintLeft_toRightOf="@id/rightMarginBox3"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/user_destination_text_view"
+                    android:text="@string/ending_point_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+
+
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/incorrect_places"
+                android:text="Wrong Locations?"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:paddingTop="20dp"
+                android:textSize="18dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="10dp"
+                app:layout_constraintTop_toBottomOf="@id/lightBox5"
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/backToMapButton"
+                app:layout_constraintTop_toTopOf="@id/incorrect_places"
+                android:clickable="true"
+                android:layout_marginTop="10dp"
+                app:layout_constraintLeft_toRightOf="@id/incorrect_places"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/back_to_map_text_view"
+                    android:text="Back to Map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+
+
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_70_rect"
+            app:layout_constraintTop_toBottomOf="@id/LocationBox"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/FlexibilityBox"
+
+            android:paddingBottom="20dp"
+
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox4"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox4"
+                />
+
+            <TextView
+                android:id="@+id/flexibility_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flexibility"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="26dp"
+                app:layout_constraintLeft_toLeftOf="@id/leftMarginBox4"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="13dp"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/user_range_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Users Within      "
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintLeft_toRightOf="@id/leftMarginBox4"
+
+                android:paddingLeft="8dp"
+                android:paddingTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/flexibility_text_view"
+
+
+
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/user_range_button"
+                app:layout_constraintTop_toTopOf="@id/user_range_text_view"
+                app:layout_constraintRight_toLeftOf="@id/rightMarginBox4"
+                app:layout_constraintLeft_toRightOf="@id/user_range_text_view"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:clickable="true"
+                android:layout_marginRight="10dp"
+
+
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/user_range_value_text_view"
+                    android:text="@string/choose_miles_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_icon"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/destination_range_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Destinations Within   "
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintLeft_toRightOf="@id/leftMarginBox4"
+
+                android:paddingLeft="6dp"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/user_range_text_view"
+
+
+
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/destination_range_button"
+                app:layout_constraintTop_toTopOf="@id/destination_range_text_view"
+                app:layout_constraintRight_toLeftOf="@id/rightMarginBox4"
+                app:layout_constraintLeft_toRightOf="@id/destination_range_text_view"
+                android:background="@drawable/lightrectangle"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:clickable="true"
+                android:layout_marginRight="10dp"
+
+
+
+                >
+
+                <TextView
+                    android:id="@+id/destination_range_value_text_view"
+                    android:text="@string/choose_miles_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/opensans_light"
+                    android:textSize="18dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_icon"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
+
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/greenrectangle"
+            app:layout_constraintTop_toBottomOf="@id/FlexibilityBox"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="30dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/findMatchesButton"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:clickable="true"
-            android:text="@string/choose_a_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/start_time_text_view"
-            android:layout_width="wrap_content"
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox5"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox5"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Matches"
+                app:layout_constraintRight_toLeftOf="@id/rightMarginBox5"
+                app:layout_constraintLeft_toRightOf="@id/leftMarginBox5"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:text="After" />
-
-        <Spinner
-            android:id="@+id/start_time_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/end_time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Before" />
-
-        <Spinner
-            android:id="@+id/end_time_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/location_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Location"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/user_location_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/google_map_location_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Use Google Map to find my location" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Find riders within" />
-
-        <Spinner
-            android:id="@+id/distance_from_user_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Destination"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/user_destination_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/find_destination_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Find a destination" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Find other riders' destinations within"/>
-
-        <Spinner
-            android:id="@+id/distance_from_dest_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/find_a_share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Find a share" />
-
-        <Button
+            android:background="@drawable/redrect"
+            app:layout_constraintTop_toBottomOf="@id/findMatchesButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="30dp"
+            app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/sign_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign Out" />
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:clickable="true"
 
-    </LinearLayout>
-</FrameLayout>
+            >
+
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/leftMarginBox5"
+                />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                android:id="@+id/rightMarginBox5"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign Out"
+                app:layout_constraintRight_toLeftOf="@id/rightMarginBox5"
+                app:layout_constraintLeft_toRightOf="@id/leftMarginBox5"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_light"
+                android:textSize="22dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+
+
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
