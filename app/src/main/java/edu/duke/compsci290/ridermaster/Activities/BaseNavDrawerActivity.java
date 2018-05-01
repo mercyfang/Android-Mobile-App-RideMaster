@@ -65,9 +65,11 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+
             case R.id.nav_find_ride:
                 Intent intent1 = new Intent(this, RideRequestActivity.class);
                 startActivity(intent1);
@@ -89,4 +91,7 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

@@ -53,7 +53,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Utilities.UtilityFunctions;
+import GetterSettersAdapters.PlaceAutocompleteAdapter;
+import GetterSettersAdapters.PlaceInformation;
+import GetterSettersAdapters.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
 
@@ -98,7 +100,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterStarting;    //Adapter for the list that automatically provides suggestions (For the Starting location search bar)
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapterDestination; //Adapter for the list that automatically provides suggestions (For the Destination search bar)
     private GoogleApiClient mGoogleApiClient;                              //Provides to access to Google's APIs
-    private PlaceInfo mPlace;                                              //Provides data for a given Place object
+    private PlaceInformation mPlace;                                              //Provides data for a given Place object
     private Marker mMarker;                                                //Marker object
     protected GeoDataClient mGeoDataClientStarting;                        //Object that allows the map to find a place (for starting search bar)
     protected GeoDataClient mGeoDataClientDestination;                     //Object that allows the map to find a place (for destination search bar)
@@ -510,12 +512,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    /**
-     * Moves the camera to the place near you
-     * @param latLng
-     * @param zoom
-     * @param placeInfo
-     */
 //    private void moveCamera(LatLng latLng, float zoom, PlaceInfo placeInfo) {
 //        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude); //@Todo Logger
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
@@ -718,7 +714,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             final Place place = places.get(0);
             try {
-                mPlace = new PlaceInfo();
+                mPlace = new PlaceInformation();
                 mPlace.setName(place.getName().toString());
                 mPlace.setAddress(place.getAddress().toString());
                 //mPlace.setAttribution(place.getAttributions().toString());
@@ -755,7 +751,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             final Place place = places.get(0);
             try {
-                mPlace = new PlaceInfo();
+                mPlace = new PlaceInformation();
                 mPlace.setName(place.getName().toString());
                 mPlace.setAddress(place.getAddress().toString());
                 //mPlace.setAttribution(place.getAttributions().toString());

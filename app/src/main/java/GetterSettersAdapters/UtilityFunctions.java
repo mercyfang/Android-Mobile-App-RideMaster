@@ -1,4 +1,4 @@
-package Utilities;
+package GetterSettersAdapters;
 
 import android.content.SharedPreferences;
 

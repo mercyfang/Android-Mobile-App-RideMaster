@@ -1,4 +1,4 @@
-package edu.duke.compsci290.ridermaster.Activities;
+package GetterSettersAdapters;
 
 import android.net.Uri;
 
@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by shreyasingh on 4/28/18.
  */
 
-public class PlaceInfo {
+public class PlaceInformation {
 
     private String name;
     private String address;
@@ -22,7 +22,7 @@ public class PlaceInfo {
     private String attribution;
 
 
-    public PlaceInfo(String name, String address, String phoneNumber, String id, Uri website, LatLng latlng, float rating, String attribution) {
+    public PlaceInformation(String name, String address, String phoneNumber, String id, Uri website, LatLng latlng, float rating, String attribution) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -97,7 +97,7 @@ public class PlaceInfo {
         this.attribution = attribution;
     }
 
-    public PlaceInfo() {
+    public PlaceInformation() {
 
 
     }

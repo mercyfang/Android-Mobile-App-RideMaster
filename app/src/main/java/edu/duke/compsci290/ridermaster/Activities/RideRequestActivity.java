@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
 import FirebaseDatabase.FindMatches;
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
 import FirebaseDatabase.Request;
-import Utilities.UtilityFunctions;
+import GetterSettersAdapters.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
 public class RideRequestActivity extends BaseNavDrawerActivity {
@@ -281,7 +281,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         "Within 1 miles", "Within 1.5 miles", "Within 3 miles"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(RideRequestActivity.this);
-                builder.setTitle("How far away can youfr match be?");
+                builder.setTitle("How far away can your match be?");
                 builder.setItems(distances, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
