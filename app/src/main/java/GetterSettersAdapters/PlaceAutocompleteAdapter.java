@@ -1,4 +1,4 @@
-package edu.duke.compsci290.ridermaster.Activities;
+package GetterSettersAdapters;
 
 /*
  * Copyright (C) 2015 Google Inc. All Rights Reserved.
@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.data.DataBufferUtils;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBufferResponse;
