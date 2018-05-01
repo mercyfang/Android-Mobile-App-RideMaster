@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -424,13 +425,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         destinationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         loadData();
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -531,7 +535,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         saveInfo();
+
+
 
 
 
@@ -644,6 +651,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
 
 
+
     private void saveInfo(){
         SharedPreferences sharedPref = getSharedPreferences("UserDateTimeMilesInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -706,7 +714,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         //Log.d(TAG, "saveInfo: "+ sharedPref.getAll().toString());
     }
 
-    private void restoreDefaults(){
+    private void restoreDefaults() {
         SharedPreferences sharedPref = getSharedPreferences("UserDateTimeMilesInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
@@ -781,4 +789,5 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
         editor.commit();
     }
+
 }

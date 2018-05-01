@@ -221,6 +221,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSearchTextStarting.setAdapter(mPlaceAutocompleteAdapterStarting);
 
 
+
         /**
          * When the Enter is clicked for the starting location search
          * @param v
@@ -239,13 +240,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
                     //Makes the Search Text for destination editable
-                    mSearchTextDestination.setInputType(589825);
-                    mSearchTextDestination.setText("");
-                    mSearchTextDestination.setTextColor(getResources().getColor(R.color.black));
+
                     //Toast.makeText(MapActivity.this, String.valueOf(myStartingLat) + "," + String.valueOf(myStartingLng), Toast.LENGTH_SHORT).show();
                     //mConfirmButton.setVisibility(View.VISIBLE);
                 }
                 return false;
+            }
+        });
+
+        mSearchTextStarting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchTextDestination.setInputType(589825);
+                mSearchTextDestination.setText("");
+                mSearchTextDestination.setTextColor(getResources().getColor(R.color.black));
             }
         });
 
@@ -265,6 +273,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mPlaceAutocompleteAdapterDestination = new PlaceAutocompleteAdapter(this, mGeoDataClientStarting, LAT_LNG_BOUNDS, null);
         mSearchTextDestination.setAdapter(mPlaceAutocompleteAdapterDestination);
 
+
         /**
          * Checks if the user has entered the first destination properly and if not then tells them to do the step that they are missing
          * @param v
@@ -272,20 +281,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSearchTextDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (mSearchTextDestination.getInputType() == 0 || mSearchTextStarting.getText().toString().trim().equals("")) {
+                    Toast.makeText(MapActivity.this, "PLEASE ENTER STARTING LOCATION!", Toast.LENGTH_LONG).show();
+                    hideSoftKeyboard();
+                }
+                    //Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim()));
+                    //mSearchTextDestination.setText("INPUT STARTING LOCATION");
+                    //mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
+
+//                }
                 mSearchTextDestination.setFocusable(true);
                 showSoftKeyboards();
+
                 //showSoftKeyboards(v);
 //                if(mSearchTextDestination.getInputType() == 0 && !mSearchTextStarting.getText().toString().trim().equals("")){
 //                    Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim())); //@Todo Logger
 //                    mSearchTextDestination.setText("Press Enter for the Starting Location");
 //                    mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
 //                }
-                if (mSearchTextDestination.getInputType() == 0 && mSearchTextStarting.getText().toString().trim().equals("")) {
-                    //Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim()));
-                    mSearchTextDestination.setText("Input Starting Location");
-                    mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
-                }
-                mConfirmButton.setVisibility(View.VISIBLE);
+
+
+
             }
         });
 
@@ -435,7 +452,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void moveCameraAfterBothLocations(LatLng latLng1,  LatLng latLng2){
         LatLng latlng1 = latLng1;
         LatLng latlng2 = latLng2;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds(latlng1, latlng2) ,150));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds(latlng1, latlng2) ,200));
 //        MarkerOptions options1 = new MarkerOptions()
 //                .position(latlng2);
 //        mMap.addMarker(options1);
@@ -495,33 +512,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      * @param zoom
      * @param placeInfo
      */
-    private void moveCamera(LatLng latLng, float zoom, PlaceInfo placeInfo) {
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude); //@Todo Logger
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        
-        mMap.clear();
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapActivity.this));
-        if (placeInfo != null){
-            try{
-                String snippet = "Address: " + placeInfo.getAddress() + "\n" +
-                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
-                        "Website: " + placeInfo.getWebsite() + "\n" +
-                        "Price Rating: " + placeInfo.getRating() + "\n";
-                MarkerOptions options = new MarkerOptions()
-                        .position(latLng)
-                        .title(placeInfo.getName())
-                        .snippet(snippet);
-
-                mMarker = mMap.addMarker(options);
-            } catch (NullPointerException e){
-                Log.e(TAG, "moveCamera: NullPointException" + e.getMessage() );
-            }
-        } else {
-            mMap.addMarker(new MarkerOptions().position(latLng));
-        }
-        hideSoftKeyboard();
-
-    }
+//    private void moveCamera(LatLng latLng, float zoom, PlaceInfo placeInfo) {
+//        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude); //@Todo Logger
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+//
+//        mMap.clear();
+//        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapActivity.this));
+//        if (placeInfo != null){
+//            try{
+//                String snippet = "Address: " + placeInfo.getAddress() + "\n" +
+//                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
+//                        "Website: " + placeInfo.getWebsite() + "\n" +
+//                        "Price Rating: " + placeInfo.getRating() + "\n";
+//                MarkerOptions options = new MarkerOptions()
+//                        .position(latLng)
+//                        .title(placeInfo.getName())
+//                        .snippet(snippet);
+//
+//                mMarker = mMap.addMarker(options);
+//            } catch (NullPointerException e){
+//                Log.e(TAG, "moveCamera: NullPointException" + e.getMessage() );
+//            }
+//        } else {
+//            mMap.addMarker(new MarkerOptions().position(latLng));
+//        }
+//        hideSoftKeyboard();
+//
+//    }
 
     /**
      * Resizes the map to a given Zoom Bound, given the coordinates of a place
@@ -608,7 +625,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //MapsAsync initializes the map system and view
         mapFragment.getMapAsync(MapActivity.this);
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show(); //@Todo Toaster
+        //Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show(); //@Todo Toaster
     }
 
     private void hideSoftKeyboard(){
@@ -619,14 +636,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                this.getCurrentFocus().getWindowToken(),
 //                InputMethodManager.HIDE_NOT_ALWAYS);
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         InputMethodManager imm = (InputMethodManager) MapActivity.this.getSystemService(this.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//        if(imm != null){
+//            imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+//        }
+
 
     }
 
     public void showSoftKeyboards(){
         InputMethodManager imm = (InputMethodManager) MapActivity.this.getSystemService(this.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+//
+//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//        if(imm != null){
+//            imm.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
+//        }
+
 
     }
 
@@ -650,6 +680,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private AdapterView.OnItemClickListener mAutocompleteClickListenerDestination = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mConfirmButton.setVisibility(View.VISIBLE);
+//            if (mSearchTextDestination.getInputType() == 0 && mSearchTextStarting.getText().toString().trim().equals("")) {
+//                //Log.d(TAG, String.format("SearchText.text: -_-_-%s-_-_-", mSearchTextStarting.getText().toString().trim()));
+//                mSearchTextDestination.setText("Input Starting Location");
+//                mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
+//            }
+
 
             final AutocompletePrediction item = mPlaceAutocompleteAdapterDestination.getItem(position);
             final String placeId = item.getPlaceId();
@@ -695,9 +732,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         + e.getMessage());
             }
             moveCamera(new LatLng(place.getViewport().getCenter().latitude,
-                    place.getViewport().getCenter().longitude),DEFAULT_ZOOM, mPlace);
+                    place.getViewport().getCenter().longitude),DEFAULT_ZOOM, "place");
 
-            //hideSoftKeyboard();
+            hideSoftKeyboard();
 
             places.release(); //to avoid memory leak
         }

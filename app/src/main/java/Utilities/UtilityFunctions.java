@@ -17,4 +17,6 @@ public class UtilityFunctions {
             SharedPreferences prefs, final String key, final double defaultValue) {
         return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
+
+
 }
