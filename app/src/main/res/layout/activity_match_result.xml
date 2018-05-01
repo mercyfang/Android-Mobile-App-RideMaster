@@ -45,7 +45,49 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
 
+        <TextView
+            android:id="@+id/match_info_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
 
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:clickable="true"
+            android:fontFamily="@font/opensans_light"
+            android:gravity="center_horizontal"
+            android:paddingBottom="40dp"
+            android:paddingLeft="5dp"
+
+            android:paddingRight="5dp"
+            android:text="Date, Start to End"
+            android:textColor="@color/blue_90"
+            android:textSize="16dp"
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.27999997" />
+
+        <TextView
+            android:id="@+id/match_status_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+
+            android:fontFamily="@font/opensans_light"
+            android:paddingBottom="50dp"
+            android:paddingTop="5dp"
+            android:text="Matching..."
+            android:textColor="@color/blue_80"
+            android:textSize="26dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/match_info_text_view" />
 
         <android.support.constraint.ConstraintLayout
 
@@ -82,26 +124,7 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/match_status_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/opensans_light"
-            android:paddingBottom="50dp"
-
-            android:paddingTop="5dp"
-            android:text="Matching..."
-            android:textColor="@color/blue_80"
-            android:textSize="26dp"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-   <!--
+        <!--
         <android.support.constraint.ConstraintLayout
 
             android:id="@+id/request_another_user_button"

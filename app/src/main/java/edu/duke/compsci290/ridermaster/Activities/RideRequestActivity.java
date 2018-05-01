@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -21,9 +23,11 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -73,6 +77,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private static final String TAG = "RideRequestActivity";
 
+    private static Context thisContext;
 
     /**
      * Variables for firebase
@@ -102,7 +107,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
         loadData();
         // Sets activity main view.
-
+        thisContext = getApplicationContext();
 
 
 
@@ -360,6 +365,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
                 );
 
+                //String[] info = new String[8];
+
+                //info[0] = mDatePicker.getText().toString();
+                //info[1] = String.format("%02d:%02d", startTimeHours, startTimeMinutes);
+                //info[2] = String.format("%02d:%02d", endTimeHours, endTimeMinutes);
+
+                String information = requestInfoText(mDatePicker.getText().toString(),
+                        String.format("%02d:%02d", startTimeHours, startTimeMinutes),
+                        String.format("%02d:%02d", endTimeHours, endTimeMinutes),
+                        myStartingLat,myStartingLng,myDestinationLat,myDestinationLng);
 
 
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter =
@@ -375,9 +390,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 try {
                     finder.findMatches(request);
                 } catch (NoSuchElementException e) {
-                    // TODO: jane display message "no match is found".
-                    //TODO: jane added this, but not responding?
-                    MatchResultActivity.updateStatusTextView("none");
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
@@ -389,6 +401,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         requestId);
                 intent.putExtra("date",
                         date);
+                intent.putExtra("information", information);
                 //need to pass the find matches user in
 
                 startActivity(intent);
@@ -545,5 +558,60 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
         Log.d(TAG, "loadData: " + myStartingLat + myStartingLng + startingLocText +
                 myDestinationLat + myDestinationLng + destinationLocText);
         Log.d(TAG, "saveInfo: "+ sharedPref.getAll().toString());
+    }
+
+    public static String locationConverter(double latitude, double longitude) throws IOException {
+        //get latitude and longtitude and convert into address string
+
+        Geocoder geocoder;
+        geocoder = new Geocoder(thisContext, Locale.getDefault());
+        List<Address> addresses;
+
+        try{
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        }catch(IllegalArgumentException i){
+            addresses = null;
+            }
+        String address = "";
+
+        if (addresses == null){
+            address = "";
+        }
+        else if (addresses.size() > 0){
+            address = addresses.get(0).getAddressLine(0).split(",") [0];
+        }
+        Log.d("tag", "converted location to " + address);
+        return address;
+    }
+
+    public static String requestInfoText(String date, String startTime, String endTime, double myStartingLat, double myStartingLng,
+                                         double myDestinationLat, double myDestinationLng){
+        String information;
+
+        if (startTime.equals(endTime)){
+            information = "Your trip on " + date +
+                    " " + startTime;
+        }
+        else {
+            information = "Your trip on " + date +
+                    " " + startTime +
+                    " - " + endTime;
+        }
+
+
+        try {
+            //info[3] = locationConverter(myStartingLat,myStartingLng);
+            information = information + " from " + locationConverter(myStartingLat,myStartingLng);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            //info[4] = locationConverter(myDestinationLat, myDestinationLng);
+            information = information + " to " + locationConverter(myDestinationLat, myDestinationLng);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("tag", "ride request information " + information);
+        return information;
     }
 }

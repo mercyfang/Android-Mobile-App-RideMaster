@@ -1,18 +1,27 @@
 package FirebaseDatabase;
 
+import android.location.Geocoder;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import edu.duke.compsci290.ridermaster.Activities.HistoryActivity;
 import edu.duke.compsci290.ridermaster.Activities.MatchResultActivity;
+import edu.duke.compsci290.ridermaster.Activities.RideRequestActivity;
 
 /**
  * Created by mercyfang on 4/10/18.
@@ -146,13 +155,11 @@ public class FirebaseDatabaseReaderWriter {
 
     public void deleteUserAndRideRequest(String uid, String requestId){
         DatabaseReference requestRef = root.child("users").child(uid).child("requests").child(requestId);
-        requestRef.setValue(null);
         requestRef.removeValue();
     }
 
     public void deleteDate(String date, String requestId){
         DatabaseReference datesRef = root.child("dates");
-        datesRef.child(date).child(requestId).setValue(null);
         datesRef.child(date).child(requestId).removeValue();
     }
 
@@ -254,6 +261,137 @@ public class FirebaseDatabaseReaderWriter {
 
         return score[0];
     }
+
+    public void matchNotification(String requestId){
+        DatabaseReference curRef = root.child("requests").child(requestId);
+        curRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child("isMatched") == null){
+                    return;
+                }
+                if (dataSnapshot.child("isMatched").getValue() == null){
+                    return;
+                }
+                boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
+
+                if (isMatched){
+                    MatchResultActivity.updateStatusTextView("Found a match!");
+                    Log.d(TAG, "**** isMatched changed!.");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Firebase request match Nofification failed.");
+
+            }
+        });
+    }
+
+
+    public void addRequestHistory(final String uid){
+        DatabaseReference curRef = root.child("users").child(uid).child("requests");
+
+
+        curRef.addChildEventListener(new ChildEventListener() {
+
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("tag", "children added in user request " + uid);
+                String requestId = dataSnapshot.getKey();
+                Log.d("tag", "the children requestId is " + requestId);
+                addRequest(uid, requestId);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void addRequest(final String uid, final String requestId){
+        Log.d("tag", "after call func " + requestId);
+
+        DatabaseReference curRef = root.child("requests").child(requestId);
+        curRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String userId = (String) dataSnapshot.child("uId").getValue();
+
+                if (userId == null){
+                    return;
+                }
+
+                String date = (String) dataSnapshot.child("date").getValue();
+                int rMonth = Integer.parseInt(date.split("/")[0]);
+                int rDate = Integer.parseInt(date.split("/")[1]);
+                int rYear = Integer.parseInt(date.split("/")[2]);
+                String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+                Log.d("tag", "this is user id:" + userId + ", " + uid + date);
+
+
+
+                if (! userId.equals(uid)){
+                    Log.d("tag", "user id do not match up");
+                }
+
+                String startTime = (String) dataSnapshot.child("startTime").getValue();
+                String endTime = (String) dataSnapshot.child("endTime").getValue();
+
+                Log.d("tag", date + endTime);
+
+                String myStartLoc = (String) dataSnapshot.child("location").getValue();
+                double myStartingLat = Double.parseDouble(myStartLoc.split(";")[0]);
+                double myStartingLng = Double.parseDouble(myStartLoc.split(";")[1]);
+
+                String myEndLoc = (String) dataSnapshot.child("destination").getValue();
+                double myDestinationLat = Double.parseDouble(myEndLoc.split(";")[0]);
+                double myDestinationLng = Double.parseDouble(myEndLoc.split(";")[1]);
+
+                boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
+
+
+
+                String text = RideRequestActivity.requestInfoText(date, startTime, endTime,
+                         myStartingLat,  myStartingLng,
+                         myDestinationLat,  myDestinationLng);
+
+                HistoryActivity.getInstance().addRequestButton(requestId, uid, date, text, isMatched);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+
+
+
 
 
 

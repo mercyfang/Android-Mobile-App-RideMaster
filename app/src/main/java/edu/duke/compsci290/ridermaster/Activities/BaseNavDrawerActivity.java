@@ -84,6 +84,7 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 Intent intent3 = new Intent(this,MainActivity.class);
+                Log.d("tag", "noped tapped this one");
                 startActivity(intent3);
                 return true;
         }

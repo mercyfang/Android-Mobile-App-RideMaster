@@ -34,8 +34,11 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     private String uid;
     private String date;
     private String requestId;
+    private String info;
 
     private static TextView mStatusText;
+    private TextView mInfoText;
+
 
 
     @Override
@@ -57,13 +60,31 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
             uid = extras.getString("uid");
             date = extras.getString("date");
             requestId = extras.getString("requestid");
+            info = extras.getString("information");
+
         }else{
             Toast toast =  Toast.makeText(getApplicationContext(), "Error in getting this request basic, request again!", Toast.LENGTH_SHORT);
             toast.show();
         }
 
+        //set up on Listener for request matched in firebase database
+        FirebaseDatabaseReaderWriter fbReaderWriter = new FirebaseDatabaseReaderWriter();
+        fbReaderWriter.matchNotification(requestId);
+
+
+
+
 
         mStatusText = findViewById(R.id.match_status_text_view);
+        mInfoText = findViewById(R.id.match_info_text_view);
+
+        mInfoText.setText(info);
+
+        Log.d("tag", "match result: info printing" + info);
+
+
+
+
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
 
@@ -185,7 +206,8 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         }
     }
 
-    // TODO: notification window onListener on isMatched boolean?
+
+
 
 
 

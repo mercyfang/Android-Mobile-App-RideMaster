@@ -89,8 +89,9 @@
             android:layout_marginBottom="10dp"
 
             android:background="@drawable/round_button"
-            android:fontFamily="@font/opensans_light"
+            android:contentDescription="for log in"
 
+            android:fontFamily="@font/opensans_light"
             android:text="Log in" />
 
         <Button
