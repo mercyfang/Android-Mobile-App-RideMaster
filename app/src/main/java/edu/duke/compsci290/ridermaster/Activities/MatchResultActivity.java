@@ -139,9 +139,10 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
                 //delete this request
                 FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter = new FirebaseDatabaseReaderWriter();
+
+                firebaseDatabaseReaderWriter.deleteUserAndRideRequest(uid, requestId);
                 firebaseDatabaseReaderWriter.deleteDate(date, requestId);
                 firebaseDatabaseReaderWriter.deleteRideRequest(requestId);
-                firebaseDatabaseReaderWriter.deleteUserAndRideRequest(uid, requestId);
 
                 //go back to map
                 Intent intent = new Intent(MatchResultActivity.this, MapActivity.class);

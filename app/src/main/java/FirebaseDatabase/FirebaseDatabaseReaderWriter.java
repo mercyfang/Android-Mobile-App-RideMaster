@@ -145,7 +145,7 @@ public class FirebaseDatabaseReaderWriter {
     }
 
     public void deleteUserAndRideRequest(String uid, String requestId){
-        DatabaseReference requestRef = root.child("users").child(uid).child(requestId);
+        DatabaseReference requestRef = root.child("users").child(uid).child("requests").child(requestId);
         requestRef.setValue(null);
         requestRef.removeValue();
     }
