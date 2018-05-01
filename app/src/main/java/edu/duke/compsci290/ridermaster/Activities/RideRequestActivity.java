@@ -372,15 +372,14 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
                 FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
-                User user;
                 String uid = firebaseUser.getUid();
                 String requestId = request.getRequestId();
                 String date = mDatePicker.getText().toString();
 
                 try {
-                    user = finder.findMatches(request);
+                    finder.findMatches(request);
                 } catch (NoSuchElementException e) {
-
+                    // TODO: jane display message "no match is found".
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);

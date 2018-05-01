@@ -14,9 +14,7 @@ public class FindMatches {
         this.reader = reader;
     }
 
-    public User findMatches(Request request) throws NoSuchElementException {
-        User user = null;
+    public void findMatches(Request request) throws NoSuchElementException {
         reader.readDateAndRequest(request);
-        return user;
     }
 }

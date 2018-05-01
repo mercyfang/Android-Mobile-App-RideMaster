@@ -22,8 +22,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     private ConstraintLayout mBackButton;
     private ConstraintLayout mNewMatchButton;
     private ConstraintLayout mNewTripButton;
-    private TextView mStatusText;
-
+    private static TextView mStatusText;
 
 
     @Override
@@ -50,10 +49,6 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
 
         mStatusText = findViewById(R.id.match_status_text_view);
-        //MERCY
-
-        updateStatusTextView("email");
-
 
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
@@ -150,16 +145,13 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
     }
 
-    public void updateStatusTextView(String userEmail){
-        if (userEmail.equals("none") || userEmail.equals("") || userEmail == null){
+    public static void updateStatusTextView(String userEmail) {
+        if (userEmail.equals("none") || userEmail.equals("") || userEmail == null) {
             mStatusText.setText("No Match Found");
-        }else{
+        } else {
             mStatusText.setText("Found Match: " + userEmail);
         }
     }
-
-
-
 
     // TODO: disables back button.
 }
