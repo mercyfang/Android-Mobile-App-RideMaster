@@ -276,4 +276,7 @@ public class FirebaseDatabaseReaderWriter {
         }
         return score[0];
     }
+
+
+
 }
