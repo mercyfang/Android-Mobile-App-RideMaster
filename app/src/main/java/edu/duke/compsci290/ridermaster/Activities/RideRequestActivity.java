@@ -375,11 +375,14 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 String uid = firebaseUser.getUid();
                 String requestId = request.getRequestId();
                 String date = mDatePicker.getText().toString();
+                String email = "";
 
                 try {
                     finder.findMatches(request);
                 } catch (NoSuchElementException e) {
                     // TODO: jane display message "no match is found".
+                    //TODO: jane added this, but not responding?
+                    MatchResultActivity.updateStatusTextView("none");
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
@@ -391,6 +394,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         requestId);
                 intent.putExtra("date",
                         date);
+                //need to pass the find matches user in
 
                 startActivity(intent);
             }

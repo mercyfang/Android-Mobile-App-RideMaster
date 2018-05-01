@@ -126,6 +126,7 @@ public class FirebaseDatabaseReaderWriter {
         writeDate(request.date, requestId);
     }
 
+
     private void readUserEmailAndUpdateMatchResultActivity(String uId) {
 //        final DatabaseReference usersRef = root.child("users").child(uId);
 //        final String[] userEmail = new String[1];
@@ -143,19 +144,19 @@ public class FirebaseDatabaseReaderWriter {
 //        });
     }
 
-    private void deleteUserAndRideRequest(String uid, String requestId){
-        DatabaseReference requestRef = root.child("users").child(uid).child(requestId);
+    public void deleteUserAndRideRequest(String uid, String requestId){
+        DatabaseReference requestRef = root.child("users").child(uid).child("requests").child(requestId);
         requestRef.setValue(null);
         requestRef.removeValue();
     }
 
-    private void deleteDate(String date, String requestId){
+    public void deleteDate(String date, String requestId){
         DatabaseReference datesRef = root.child("dates");
         datesRef.child(date).child(requestId).setValue(null);
         datesRef.child(date).child(requestId).removeValue();
     }
 
-    private void deleteRideRequest(String requestID){
+    public void deleteRideRequest(String requestID){
         //delete a match request from database
 
         DatabaseReference requestsRef = root.child("requests");
@@ -253,4 +254,7 @@ public class FirebaseDatabaseReaderWriter {
 
         return score[0];
     }
+
+
+
 }
