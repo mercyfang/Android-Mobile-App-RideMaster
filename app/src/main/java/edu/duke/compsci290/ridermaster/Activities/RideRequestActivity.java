@@ -373,10 +373,11 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 String email = "";
 
                 try {
-
                     finder.findMatches(request);
                 } catch (NoSuchElementException e) {
                     // TODO: jane display message "no match is found".
+                    //TODO: jane added this, but not responding?
+                    MatchResultActivity.updateStatusTextView("none");
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);

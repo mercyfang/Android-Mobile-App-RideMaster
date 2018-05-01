@@ -173,7 +173,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
     public static void updateStatusTextView(String userEmail) {
         if (userEmail.equals("none") || userEmail.equals("") || userEmail == null) {
-            mStatusText.setText("No Match Found");
+            mStatusText.setText("No match is found");
         } else {
             mStatusText.setText("Found Match: " + userEmail);
         }

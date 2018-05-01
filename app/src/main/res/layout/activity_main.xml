@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.duke.compsci290.ridermaster.Activities.MainActivity"
-    android:background="@color/blue_80"
+    android:background="@color/blue_60"
     android:orientation="vertical">
 
     <TextView
