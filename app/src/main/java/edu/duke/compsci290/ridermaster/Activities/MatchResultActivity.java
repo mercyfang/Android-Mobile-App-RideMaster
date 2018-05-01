@@ -5,15 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+import FirebaseDatabase.Request;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -179,5 +185,10 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         }
     }
 
-    // TODO: disables back button.
+    // TODO: notification window onListener on isMatched boolean?
+
+
+
+
+
 }
