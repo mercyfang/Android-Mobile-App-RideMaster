@@ -16,13 +16,10 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
-<<<<<<< HEAD
 import FirebaseDatabase.InfoHolder;
 import FirebaseDatabase.Request;
 import Utilities.UtilityFunctions;
-=======
 import GetterSettersAdapters.UtilityFunctions;
->>>>>>> dcc6a0190b45debf707df3fc9dde30b2763bd3be
 import edu.duke.compsci290.ridermaster.R;
 
 public class MatchResultActivity extends BaseNavDrawerActivity {
