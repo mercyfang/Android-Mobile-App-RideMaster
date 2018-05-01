@@ -3,9 +3,9 @@
     package="edu.duke.compsci290.ridermaster">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,45 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
         <activity
             android:name=".Activities.RideRequestActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-
-
-
-
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".Activities.HistoryActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-
-
-
-
-        </activity>
-
-
-
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".Activities.MatchResultActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-
-
-
-
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!-- Facebook log in -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -75,15 +51,20 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.BaseNavDrawerActivity"></activity>
+        <activity android:name=".Activities.BaseNavDrawerActivity" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value= "AIzaSyBB-9NNsWI8k43Ym7j1ze6S1lBMsb53WFw"/>
-        <activity android:name=".Activities.MapActivity"></activity>
+            android:value="AIzaSyBB-9NNsWI8k43Ym7j1ze6S1lBMsb53WFw" />
 
+        <activity android:name=".Activities.MapActivity" />
+        <activity
+            android:name=".Activities.AccountInfoActivity"
+            android:label="@string/title_activity_account_info"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

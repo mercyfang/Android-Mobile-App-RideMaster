@@ -44,7 +44,7 @@
 
 
 
-        app:layout_constraintTop_toBottomOf="@id/match_status_text_view">
+        app:layout_constraintTop_toBottomOf="@id/useremail_text_view">
 
         <EditText
             android:id="@+id/email_field_edit_text"
@@ -89,8 +89,9 @@
             android:layout_marginBottom="10dp"
 
             android:background="@drawable/round_button"
-            android:fontFamily="@font/opensans_light"
+            android:contentDescription="for log in"
 
+            android:fontFamily="@font/opensans_light"
             android:text="Log in" />
 
         <Button
@@ -100,7 +101,6 @@
             android:layout_marginBottom="10dp"
 
             android:background="@drawable/round_button"
-
             android:fontFamily="@font/opensans_light"
             android:text="Sign up" />
 

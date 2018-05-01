@@ -28,6 +28,7 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState, int layoutId) {
 
         setContentView(layoutId);
+        Log.d(TAG, "opened base navigation activity");
 
 
         setUpLayout();
@@ -65,9 +66,11 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+
             case R.id.nav_find_ride:
                 Intent intent1 = new Intent(this, RideRequestActivity.class);
                 startActivity(intent1);
@@ -84,9 +87,13 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 Intent intent3 = new Intent(this,MainActivity.class);
+                Log.d("tag", "noped tapped this one");
                 startActivity(intent3);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

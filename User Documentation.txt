@@ -1,0 +1,16 @@
+﻿User Documentation
+
+
+Get started: You can either sign-up using your email address or connect with facebook. Your email address or facebook id will be displayed when you are successfully matched with a partner. 
+
+
+Find a match: When you first enter the APP, a map will be shown to you. You can enter your starting location and your destination. When these two information are confirmed, you will enter other details of your ride. You may specify the acceptable time period for the ride and your tolerance of the location difference between you and your partner. After all parameters are specified, you may click confirm and submit your request. You may be matched immediately with another user with similar request. If no one is matched immediately, your request will be stored in our database. As soon as another user with similar travel plan submits their request, you will be notified. After one request is submitted, you may start a new request. 
+
+
+Get notification: When another user with similar travel plan submitted their request, you need to hit the confirm button in time. The email address or facebook id will be shared so the two of you can decide the exact travel plan. 
+
+
+View history: You may view your matching history by clicking the ride history button in the toolbar. 
+
+
+Sign out: You may sign out by clicking the sign-out button in the toolbar. You may log in later or sign up a new account.

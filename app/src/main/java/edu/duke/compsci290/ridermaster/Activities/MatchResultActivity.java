@@ -12,17 +12,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+<<<<<<< HEAD
 import FirebaseDatabase.InfoHolder;
 import FirebaseDatabase.Request;
 import Utilities.UtilityFunctions;
+=======
+import GetterSettersAdapters.UtilityFunctions;
+>>>>>>> dcc6a0190b45debf707df3fc9dde30b2763bd3be
 import edu.duke.compsci290.ridermaster.R;
 
 public class MatchResultActivity extends BaseNavDrawerActivity {
@@ -36,8 +36,11 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     private String uid;
     private String date;
     private String requestId;
+    private String info;
 
     private static TextView mStatusText;
+    private TextView mInfoText;
+
 
 
     @Override
@@ -59,13 +62,31 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
             uid = extras.getString("uid");
             date = extras.getString("date");
             requestId = extras.getString("requestid");
+            info = extras.getString("information");
+
         }else{
             Toast toast =  Toast.makeText(getApplicationContext(), "Error in getting this request basic, request again!", Toast.LENGTH_SHORT);
             toast.show();
         }
 
+        //set up on Listener for request matched in firebase database
+        FirebaseDatabaseReaderWriter fbReaderWriter = new FirebaseDatabaseReaderWriter();
+        fbReaderWriter.matchNotification(requestId);
 
-        mStatusText = findViewById(R.id.match_status_text_view);
+
+
+
+
+        mStatusText = findViewById(R.id.useremail_text_view);
+        mInfoText = findViewById(R.id.userid_text_view);
+
+        mInfoText.setText(info);
+
+        Log.d("tag", "match result: info printing" + info);
+
+
+
+
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
 
@@ -199,7 +220,8 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         }
     }
 
-    // TODO: notification window onListener on isMatched boolean?
+
+
 
 
 
