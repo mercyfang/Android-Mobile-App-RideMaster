@@ -339,7 +339,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /**
      * Gets the user's input starting location text
      * Converts the address into latitude and longitude coordinates
-     * sets the  global variables to the retrieved latitue and longitude coordinates
+     * sets the  global variables to the retrieved latitue andNOO longitude coordinates
      *
      */
     private void moveMapToStartingLocation(){
