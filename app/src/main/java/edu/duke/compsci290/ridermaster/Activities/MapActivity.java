@@ -285,6 +285,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mSearchTextDestination.setText("Input Starting Location");
                     mSearchTextDestination.setTextColor(getResources().getColor(R.color.red));
                 }
+                mConfirmButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -304,7 +305,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         event.getAction() == KeyEvent.KEYCODE_ENTER) {
 
                     //moveMapToDestinationLocation();
-                    mConfirmButton.setVisibility(View.VISIBLE);
+
                     mMidPointLat = (myDestLat + myStartingLat) / 2;
                     mMidPointLng = (myDestLng + myStartingLng) / 2;
 //                    Toast.makeText(MapActivity.this, String.valueOf(diffLat) + "," + String.valueOf(diffLng), Toast.LENGTH_SHORT).show();
