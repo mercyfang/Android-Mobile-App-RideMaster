@@ -25,8 +25,6 @@ public class FirebaseDatabaseReaderWriter {
     private FirebaseUser firebaseUser;
     private DatabaseReference root;
 
-    final String[] currRequestId = new String[1];
-
     public FirebaseDatabaseReaderWriter() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         root = FirebaseDatabase.getInstance().getReference();
@@ -127,20 +125,20 @@ public class FirebaseDatabaseReaderWriter {
     }
 
     private void readUserEmailAndUpdateMatchResultActivity(String uId) {
-//        final DatabaseReference usersRef = root.child("users").child(uId);
-//        final String[] userEmail = new String[1];
-//        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                userEmail[0] = (String) dataSnapshot.child("email").getValue();
-//                MatchResultActivity.updateStatusTextView(userEmail[0]);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "Failed to read value.", databaseError.toException());
-//            }
-//        });
+        final DatabaseReference usersRef = root.child("users").child(uId);
+        final String[] userEmail = new String[1];
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userEmail[0] = (String) dataSnapshot.child("email").getValue();
+                MatchResultActivity.updateStatusTextView(userEmail[0]);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Failed to read value.", databaseError.toException());
+            }
+        });
     }
 
     private void deleteUserAndRideRequest(String uid, String requestId){
@@ -210,17 +208,26 @@ public class FirebaseDatabaseReaderWriter {
                              final DatabaseReference requestRef,
                              final String[] currRequestId) {
         final int[] score = new int[1];
+        // Hacks the Firebase asynchronous datareading process.
+        final boolean[] finishedCalScore = new boolean[1];
         requestRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("debug", "ondatachange");
                 // Do no match again if already matched.
                 boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
+                Log.d("debug", "isMatched value:" +isMatched);
                 if (isMatched) {
+                    Log.d("debug", "isMatched changed");
+                    finishedCalScore[0] = true;
                     return;
                 }
                 // Do not match if same user.
                 String uId = (String) dataSnapshot.child("uId").getValue();
+                Log.d("debug", "uId: " +uId);
                 if (uId.equals(request.uId)) {
+                    Log.d("debug", "requestUid equals");
+                    finishedCalScore[0] = true;
                     return;
                 }
 
@@ -234,6 +241,8 @@ public class FirebaseDatabaseReaderWriter {
                 String endTime = (String) dataSnapshot.child("endTime").getValue();
                 if (request.startTime.compareTo(endTime) >= 0
                         || request.endTime.compareTo(startTime) <= 0) {
+                    Log.d("debug", "time collapse");
+                    finishedCalScore[0] = true;
                     return;
                 }
                 // Start time is the latest start time between the two.
@@ -243,6 +252,11 @@ public class FirebaseDatabaseReaderWriter {
                 String end = request.endTime.compareTo(endTime) > 0
                         ? endTime : request.endTime;
                 score[0] += Math.abs(start.compareTo(end));
+
+                // Uses longitude and latitude of user's location to calculate score.
+
+                Log.d("debug", "score is :" + score[0]);
+                finishedCalScore[0] = true;
             }
 
             @Override
@@ -251,6 +265,14 @@ public class FirebaseDatabaseReaderWriter {
             }
         });
 
+        int counter = 0;
+        while (!finishedCalScore[0]) {
+            if (counter > 2000) {
+                break;
+            }
+            counter++;
+            // Waits until score is calculated.
+        }
         return score[0];
     }
 }
