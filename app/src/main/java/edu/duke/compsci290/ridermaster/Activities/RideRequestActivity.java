@@ -69,11 +69,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private Calendar mCalendar;
 
     private int startTime;
-
-
-
-
-
     private int endTime;
 
     private static final String TAG = "RideRequestActivity";
@@ -357,10 +352,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         String.format("%02d:%02d", startTimeHours, startTimeMinutes),
                         String.format("%02d:%02d", endTimeHours, endTimeMinutes),
 
-                        String.format("%f.%f", myStartingLat , myStartingLng),
+                        String.format("%f;%f", myStartingLat , myStartingLng),
                         // Only stores the miles number into request.
                         String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)),
-                        String.format("%f.%f", myDestinationLat, myDestinationLng),
+                        String.format("%f;%f", myDestinationLat, myDestinationLng),
 
                         String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
                 );
@@ -372,17 +367,16 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 firebaseDatabaseReaderWriter.writeUserAndRideRequest(request);
 
                 FindMatches finder = new FindMatches(firebaseDatabaseReaderWriter);
-                User user;
                 String uid = firebaseUser.getUid();
                 String requestId = request.getRequestId();
                 String date = mDatePicker.getText().toString();
                 String email = "";
 
                 try {
-                    user = finder.findMatches(request);
 
+                    finder.findMatches(request);
                 } catch (NoSuchElementException e) {
-
+                    // TODO: jane display message "no match is found".
                 }
 
                 Intent intent = new Intent(getApplicationContext(), MatchResultActivity.class);
@@ -525,7 +519,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
     private void loadData(){
         SharedPreferences sharedPref = getSharedPreferences("UserPathInfo", Context.MODE_PRIVATE);
-
 
         SharedPreferences.Editor editor = sharedPref.edit();
         myStartingLat = UtilityFunctions.getDouble(sharedPref, "Starting Location Latitude", 0);

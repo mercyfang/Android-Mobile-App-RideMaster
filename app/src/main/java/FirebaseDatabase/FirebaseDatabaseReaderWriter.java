@@ -12,6 +12,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.NoSuchElementException;
 
+import edu.duke.compsci290.ridermaster.Activities.MatchResultActivity;
+
 /**
  * Created by mercyfang on 4/10/18.
  */
@@ -22,6 +24,8 @@ public class FirebaseDatabaseReaderWriter {
 
     private FirebaseUser firebaseUser;
     private DatabaseReference root;
+
+    final String[] currRequestId = new String[1];
 
     public FirebaseDatabaseReaderWriter() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -35,7 +39,7 @@ public class FirebaseDatabaseReaderWriter {
      *
      * @param request
      */
-    public void readDateAndRequest(final Request request) {
+    public void readDateAndRequest(final Request request) throws NoSuchElementException {
         String[] dateArray = request.date.split("/");
         final DatabaseReference datesRef =
                 root.child("dates").child(dateArray[0]).child(dateArray[1]).child(dateArray[2]);
@@ -66,6 +70,8 @@ public class FirebaseDatabaseReaderWriter {
                 if (maxScore[0] == Integer.MIN_VALUE) {
                     throw new NoSuchElementException();
                 }
+
+                readUserEmailAndUpdateMatchResultActivity(matchRequestId[0]);
             }
 
             @Override
@@ -120,6 +126,24 @@ public class FirebaseDatabaseReaderWriter {
         writeDate(request.date, requestId);
     }
 
+
+    private void readUserEmailAndUpdateMatchResultActivity(String uId) {
+//        final DatabaseReference usersRef = root.child("users").child(uId);
+//        final String[] userEmail = new String[1];
+//        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                userEmail[0] = (String) dataSnapshot.child("email").getValue();
+//                MatchResultActivity.updateStatusTextView(userEmail[0]);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d(TAG, "Failed to read value.", databaseError.toException());
+//            }
+//        });
+    }
+
     public void deleteUserAndRideRequest(String uid, String requestId){
         DatabaseReference requestRef = root.child("users").child(uid).child(requestId);
         requestRef.setValue(null);
@@ -167,8 +191,6 @@ public class FirebaseDatabaseReaderWriter {
         currRequestRef.child("uId").setValue(firebaseUser.getUid());
     }
 
-
-
     private void writeDate(String date, String requestId) {
         // Date table looks like:
         // dates {
@@ -184,8 +206,6 @@ public class FirebaseDatabaseReaderWriter {
         DatabaseReference datesRef = root.child("dates");
         datesRef.child(date).child(requestId).setValue(true);
     }
-
-
 
     private int computeScore(final Request request,
                              final DatabaseReference requestRef,
