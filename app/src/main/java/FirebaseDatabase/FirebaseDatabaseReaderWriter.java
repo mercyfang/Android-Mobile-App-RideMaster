@@ -276,6 +276,8 @@ public class FirebaseDatabaseReaderWriter {
                 boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
 
                 if (isMatched){
+                    //TODO: jane MERCY do not pass found a match here
+                    //you should be passing the user email
                     MatchResultActivity.updateStatusTextView("Found a match!");
                     Log.d(TAG, "**** isMatched changed!.");
                 }
