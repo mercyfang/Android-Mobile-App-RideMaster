@@ -120,19 +120,19 @@ public class FirebaseDatabaseReaderWriter {
         writeDate(request.date, requestId);
     }
 
-    private void deleteUserAndRideRequest(String uid, String requestId){
+    public void deleteUserAndRideRequest(String uid, String requestId){
         DatabaseReference requestRef = root.child("users").child(uid).child(requestId);
         requestRef.setValue(null);
         requestRef.removeValue();
     }
 
-    private void deleteDate(String date, String requestId){
+    public void deleteDate(String date, String requestId){
         DatabaseReference datesRef = root.child("dates");
         datesRef.child(date).child(requestId).setValue(null);
         datesRef.child(date).child(requestId).removeValue();
     }
 
-    private void deleteRideRequest(String requestID){
+    public void deleteRideRequest(String requestID){
         //delete a match request from database
 
         DatabaseReference requestsRef = root.child("requests");

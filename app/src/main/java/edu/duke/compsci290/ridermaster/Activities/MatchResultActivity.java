@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+import Utilities.Toaster;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -23,6 +26,9 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     private ConstraintLayout mNewMatchButton;
     private ConstraintLayout mNewTripButton;
     private TextView mStatusText;
+    private String uid;
+    private String date;
+    private String requestId;
 
 
 
@@ -42,18 +48,16 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
         //retrieve intent
         Bundle extras = getIntent().getExtras();
         if (extras != null){
-            String uid = extras.getString("uid");
+            uid = extras.getString("uid");
+            date = extras.getString("date");
+            requestId = extras.getString("requestid");
         }else{
-
+            Toast toast =  Toast.makeText(getApplicationContext(), "Error in getting this request basic, request again!", Toast.LENGTH_SHORT);
+            toast.show();
         }
 
-
-
-        mStatusText = findViewById(R.id.match_status_text_view);
-        //MERCY
-
+        //TODO: need to get matched user info in here
         updateStatusTextView("email");
-
 
 
         //TODO: MAKE ONLICK FOR TEXTVIEW so it copies email to clickboard
@@ -115,14 +119,31 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 */
 
         //set my new trip button for going back to request for new trip
+        mNewTripButton = findViewById(R.id.request_another_trip_button);
+        mNewTripButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveInfo();
+                Intent intent = new Intent(MatchResultActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
-        //set my Back Button
+        //set my Back Button, delete this request from database + go back to map
         mBackButton = findViewById(R.id.match_result_back_button);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveInfo();
+
+                //delete this request
+                FirebaseDatabaseReaderWriter firebaseDatabaseReaderWriter = new FirebaseDatabaseReaderWriter();
+                firebaseDatabaseReaderWriter.deleteDate(date, requestId);
+                firebaseDatabaseReaderWriter.deleteRideRequest(requestId);
+                firebaseDatabaseReaderWriter.deleteUserAndRideRequest(uid, requestId);
+
+                //go back to map
                 Intent intent = new Intent(MatchResultActivity.this, MapActivity.class);
                 startActivity(intent);
             }
