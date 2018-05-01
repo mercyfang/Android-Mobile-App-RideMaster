@@ -28,6 +28,7 @@ public class BaseNavDrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState, int layoutId) {
 
         setContentView(layoutId);
+        Log.d(TAG, "opened base navigation activity");
 
 
         setUpLayout();
