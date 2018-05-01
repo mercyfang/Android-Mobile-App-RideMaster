@@ -368,7 +368,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 String uid = firebaseUser.getUid();
                 String requestId = request.getRequestId();
                 String date = mDatePicker.getText().toString();
-                String email = "";
 
                 try {
                     finder.findMatches(request);

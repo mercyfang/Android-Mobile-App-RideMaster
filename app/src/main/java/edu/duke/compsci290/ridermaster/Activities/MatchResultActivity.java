@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
+import FirebaseDatabase.InfoHolder;
 import FirebaseDatabase.Request;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
@@ -157,6 +159,18 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateStatusTextView(InfoHolder.matchedUserEmail);
+            }
+        }, 4000);
+        Log.d("debug", "on start finish");
+    }
+
     //Temporary Pickup Points Latitude and Longitude
     public void populatePickUpPoints(){
         pickUpPointsLatLng.add(new LatLng(35.975036, -78.924251)); //West Bus Stop
@@ -178,7 +192,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
     }
 
     public static void updateStatusTextView(String userEmail) {
-        if (userEmail.equals("none") || userEmail.equals("") || userEmail == null) {
+        if (userEmail == null || userEmail.equals("none") || userEmail.equals("")) {
             mStatusText.setText("No match is found");
         } else {
             mStatusText.setText("Found Match: " + userEmail);

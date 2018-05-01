@@ -12,8 +12,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.NoSuchElementException;
 
-import edu.duke.compsci290.ridermaster.Activities.MatchResultActivity;
-
 /**
  * Created by mercyfang on 4/10/18.
  */
@@ -24,6 +22,12 @@ public class FirebaseDatabaseReaderWriter {
 
     private FirebaseUser firebaseUser;
     private DatabaseReference root;
+
+    private int size = 0;
+    private int currentIdx = 0;
+    private int maxScore = Integer.MIN_VALUE;
+    private String matchRequestId = "";
+    private String currRequestId = "";
 
     public FirebaseDatabaseReaderWriter() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -43,33 +47,29 @@ public class FirebaseDatabaseReaderWriter {
                 root.child("dates").child(dateArray[0]).child(dateArray[1]).child(dateArray[2]);
         final DatabaseReference requestsRef = root.child("requests");
 
-        final int[] maxScore = new int[1];
-        maxScore[0] = Integer.MIN_VALUE;
-        final String[] matchRequestId = new String[1];
-        final String[] currRequestId = new String[1];
         datesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChildren()) {
                     throw new NoSuchElementException();
                 }
+                int count = 0;
+                for (DataSnapshot dateSnapshot : dataSnapshot.getChildren()){
+                    count++;
+                }
+                size = count;
+
                 for (DataSnapshot dateSnapshot : dataSnapshot.getChildren()) {
                     // Reads the same requestId entry in requests table.
                     DatabaseReference requestRef = requestsRef.child(dateSnapshot.getKey());
                     // Computes score and update best match if needed.
-                    int currScore = computeScore(request, requestRef, currRequestId);
-                    if (currScore > maxScore[0]) {
-                        maxScore[0] = currScore;
-                        matchRequestId[0] = currRequestId[0];
-                    }
+                    computeScore(request, requestRef);
                 }
 
                 // If no qualified user is found, throws exception.
-                if (maxScore[0] == Integer.MIN_VALUE) {
-                    throw new NoSuchElementException();
-                }
-
-                readUserEmailAndUpdateMatchResultActivity(matchRequestId[0]);
+//                if (maxScore[0] == Integer.MIN_VALUE) {
+//                    throw new NoSuchElementException();
+//                }
             }
 
             @Override
@@ -122,24 +122,6 @@ public class FirebaseDatabaseReaderWriter {
 
         writeRideRequest(request);
         writeDate(request.date, requestId);
-    }
-
-
-    private void readUserEmailAndUpdateMatchResultActivity(String uId) {
-        final DatabaseReference usersRef = root.child("users").child(uId);
-        final String[] userEmail = new String[1];
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userEmail[0] = (String) dataSnapshot.child("email").getValue();
-                MatchResultActivity.updateStatusTextView(userEmail[0]);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
     }
 
     public void deleteUserAndRideRequest(String uid, String requestId){
@@ -205,36 +187,45 @@ public class FirebaseDatabaseReaderWriter {
         datesRef.child(date).child(requestId).setValue(true);
     }
 
-    private int computeScore(final Request request,
-                             final DatabaseReference requestRef,
-                             final String[] currRequestId) {
-        final int[] score = new int[1];
-        // Hacks the Firebase asynchronous datareading process.
-        final boolean[] finishedCalScore = new boolean[1];
+    private void readUserEmail(String uId) {
+        final DatabaseReference usersRef = root.child("users").child(uId);
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                InfoHolder.matchedUserEmail = (String) dataSnapshot.child("email").getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Failed to read value.", databaseError.toException());
+            }
+        });
+    }
+
+    private void computeScore(final Request request, DatabaseReference requestRef) {
         requestRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("debug", "ondatachange");
+                currentIdx++;
+                if (currentIdx == size){
+                    currentIdx = 0;
+                }
                 // Do no match again if already matched.
                 boolean isMatched = (boolean) dataSnapshot.child("isMatched").getValue();
-                Log.d("debug", "isMatched value:" +isMatched);
                 if (isMatched) {
-                    Log.d("debug", "isMatched changed");
-                    finishedCalScore[0] = true;
                     return;
                 }
                 // Do not match if same user.
                 String uId = (String) dataSnapshot.child("uId").getValue();
-                Log.d("debug", "uId: " +uId);
                 if (uId.equals(request.uId)) {
-                    Log.d("debug", "requestUid equals");
-                    finishedCalScore[0] = true;
                     return;
                 }
 
                 // The current requestId to be stored if achieves max score.
-                currRequestId[0] = (String) dataSnapshot.child("requestId").getValue();
+                currRequestId = (String) dataSnapshot.child("requestId").getValue();
+                String matchedUserId = (String) dataSnapshot.child("uId").getValue();
 
+                // First checks time within range. If endTime of current user request is
                 // First checks time within range. If endTime of current user request is
                 // before a request startTime, or if startTime of current user request is after a
                 // request endTime, then do not match the two requests.
@@ -242,22 +233,59 @@ public class FirebaseDatabaseReaderWriter {
                 String endTime = (String) dataSnapshot.child("endTime").getValue();
                 if (request.startTime.compareTo(endTime) >= 0
                         || request.endTime.compareTo(startTime) <= 0) {
-                    Log.d("debug", "time collapse");
-                    finishedCalScore[0] = true;
                     return;
                 }
+
+                // Checks whether longitude and latitude is within range.
+                String[] startLocation =
+                        ((String) dataSnapshot.child("location").getValue()).split(";");
+                double startLocLat = Double.parseDouble(startLocation[0]);
+                double startLocLong = Double.parseDouble(startLocation[1]);
+                double distanceFromUser = Double.parseDouble(
+                        (String) dataSnapshot.child("distanceFromUser").getValue());
+
+                String[] currUserStartLocation = request.location.split(";");
+                double currUserLocLat = Double.parseDouble(currUserStartLocation[0]);
+                double currUserLocLong = Double.parseDouble(currUserStartLocation[1]);
+                double distanceFromCurrUser = Double.parseDouble(request.distanceFromUser);
+
+                if (currUserLocLat < startLocLat - distanceFromUser
+                        || currUserLocLat > startLocLat + distanceFromUser
+                        || currUserLocLong < startLocLong - distanceFromUser
+                        || currUserLocLong > startLocLong + distanceFromUser) {
+                    return;
+                }
+                if (startLocLat < currUserLocLat - distanceFromCurrUser
+                        || startLocLat > currUserLocLat + distanceFromCurrUser
+                        || startLocLong < currUserLocLong - distanceFromCurrUser
+                        || startLocLong > currUserLocLong + distanceFromCurrUser) {
+                    return;
+                }
+                // Uses time to calculate score.
                 // Start time is the latest start time between the two.
                 String start = request.startTime.compareTo(startTime) < 0
                         ? startTime : request.startTime;
                 // End time is the earliest start time between the two.
                 String end = request.endTime.compareTo(endTime) > 0
                         ? endTime : request.endTime;
-                score[0] += Math.abs(start.compareTo(end));
+                int currScore = 0;
+                currScore += Math.abs(start.compareTo(end));
 
                 // Uses longitude and latitude of user's location to calculate score.
+                // We use the inverse of the distance difference because if the distance between
+                // two users is larg e, then the score should be small, and vice versa.
+                currScore += (Math.pow(Math.abs(currUserLocLat - startLocLat), 2)
+                        + Math.pow(Math.abs(currUserLocLong - startLocLong), 2)) * 10;
+                if (currScore > maxScore) {
+                    maxScore = currScore;
+                    matchRequestId = currRequestId;
+                }
+                readUserEmail(matchedUserId);
 
-                Log.d("debug", "score is :" + score[0]);
-                finishedCalScore[0] = true;
+                if (currentIdx == (size - 1)){
+                    readUserEmail(matchedUserId);
+                    currentIdx = 0;
+                }
             }
 
             @Override
@@ -265,18 +293,5 @@ public class FirebaseDatabaseReaderWriter {
                 Log.d(TAG, "Firebase Request table read request failed.");
             }
         });
-
-        int counter = 0;
-        while (!finishedCalScore[0]) {
-            if (counter > 2000) {
-                break;
-            }
-            counter++;
-            // Waits until score is calculated.
-        }
-        return score[0];
     }
-
-
-
 }
