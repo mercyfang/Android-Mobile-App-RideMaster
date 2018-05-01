@@ -70,8 +70,8 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 
 
 
-        mStatusText = findViewById(R.id.match_status_text_view);
-        mInfoText = findViewById(R.id.match_info_text_view);
+        mStatusText = findViewById(R.id.useremail_text_view);
+        mInfoText = findViewById(R.id.userid_text_view);
 
         mInfoText.setText(info);
 

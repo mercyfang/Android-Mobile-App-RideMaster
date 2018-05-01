@@ -44,7 +44,7 @@
 
 
 
-        app:layout_constraintTop_toBottomOf="@id/match_status_text_view">
+        app:layout_constraintTop_toBottomOf="@id/useremail_text_view">
 
         <EditText
             android:id="@+id/email_field_edit_text"

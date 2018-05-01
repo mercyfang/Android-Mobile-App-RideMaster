@@ -10,5 +10,6 @@
     <string name="ending_point_prompt">Enter Destination</string>
     <string name="begin_time_prompt">Enter Earliest Leaving Time</string>
     <string name="end_time_prompt">Enter Latest Leaving Time</string>
+    <string name="title_activity_account_info">AccountInfoActivity</string>
 
 </resources>

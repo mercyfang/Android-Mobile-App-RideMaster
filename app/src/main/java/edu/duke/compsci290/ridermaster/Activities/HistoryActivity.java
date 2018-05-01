@@ -46,6 +46,8 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+
         historyActivityContext = getApplicationContext();
         layout = (LinearLayout) findViewById(R.id.request_history_linear_layout);
         historyActivity = this;
@@ -78,6 +80,12 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.nav_account:
+                Intent intent0 = new Intent(this, AccountInfoActivity.class);
+                startActivity(intent0);
+                return true;
+
 
             case R.id.nav_find_ride:
                 Intent intent1 = new Intent(this, RideRequestActivity.class);
