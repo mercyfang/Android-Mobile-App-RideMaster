@@ -69,11 +69,6 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
     private Calendar mCalendar;
 
     private int startTime;
-
-
-
-
-
     private int endTime;
 
     private static final String TAG = "RideRequestActivity";
@@ -357,10 +352,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                         String.format("%02d:%02d", startTimeHours, startTimeMinutes),
                         String.format("%02d:%02d", endTimeHours, endTimeMinutes),
 
-                        String.format("%f.%f", myStartingLat , myStartingLng),
+                        String.format("%f;%f", myStartingLat , myStartingLng),
                         // Only stores the miles number into request.
                         String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)),
-                        String.format("%f.%f", myDestinationLat, myDestinationLng),
+                        String.format("%f;%f", myDestinationLat, myDestinationLng),
 
                         String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
                 );
