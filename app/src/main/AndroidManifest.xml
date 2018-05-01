@@ -24,10 +24,14 @@
 
 
 
+
+
         </activity>
         <activity
             android:name=".Activities.RideRequestActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+
+
 
 
 
@@ -84,6 +88,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value= "AIzaSyBB-9NNsWI8k43Ym7j1ze6S1lBMsb53WFw"/>
         <activity android:name=".Activities.MapActivity"></activity>
+
 
     </application>
 

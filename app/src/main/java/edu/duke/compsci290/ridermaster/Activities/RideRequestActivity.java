@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseUser;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
@@ -348,9 +347,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                 // Writes user and request data into Firebase Realtime Database.
 
-                restoreDefaults();
-                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d(TAG, "firebaseRequest: " +  mUserRangeTextView.getText().toString().replaceAll("[^0-9]",""));
+                Log.d(TAG, "firebaseRequest: " +  mUserRangeTextView.getText().toString().replaceAll("[^0-9]",""));
                 Request request = new Request(
                         firebaseUser.getUid(),
                         mDatePicker.getText().toString(),
@@ -359,10 +359,10 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
 
                         String.format("%f;%f", myStartingLat , myStartingLng),
                         // Only stores the miles number into request.
-                        String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().split(" ")[1])/69)),
+                        String.format("%f",(Double.valueOf(mUserRangeTextView.getText().toString().replaceAll("[^0-9]",""))/69)),
                         String.format("%f;%f", myDestinationLat, myDestinationLng),
 
-                        String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().split(" ")[1])/69))
+                        String.format("%f",(Double.valueOf(mDestinationRangeTextView.getText().toString().replaceAll("[^0-9]",""))/69))
                 );
 
 
@@ -395,7 +395,7 @@ public class RideRequestActivity extends BaseNavDrawerActivity {
                 intent.putExtra("date",
                         date);
                 //need to pass the find matches user in
-
+                restoreDefaults();
                 startActivity(intent);
             }
         });
