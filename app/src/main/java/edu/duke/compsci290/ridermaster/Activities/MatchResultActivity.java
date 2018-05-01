@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import FirebaseDatabase.FirebaseDatabaseReaderWriter;
-import Utilities.Toaster;
 import Utilities.UtilityFunctions;
 import edu.duke.compsci290.ridermaster.R;
 
@@ -119,7 +118,7 @@ public class MatchResultActivity extends BaseNavDrawerActivity {
 */
 
         //set my new trip button for going back to request for new trip
-        mNewTripButton = findViewById(R.id.request_another_trip_button);
+        mNewTripButton = findViewById(R.id.text_edit_layout);
         mNewTripButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

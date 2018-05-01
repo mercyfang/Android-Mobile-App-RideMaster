@@ -5,62 +5,124 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.duke.compsci290.ridermaster.Activities.MainActivity"
+    android:background="@color/blue_80"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/sign_in_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Sign In Page"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/opensans_light"
+        android:paddingBottom="10dp"
+
+        android:paddingTop="5dp"
+        android:text="Sign In"
+        android:textColor="@color/white"
+        android:textSize="26dp"
+        android:clickable="true"
+
+        android:layout_gravity="center_horizontal" />
+
+    <android.support.constraint.ConstraintLayout
+
+        android:id="@+id/text_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/white_rect"
+
+
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
 
-    <EditText
-        android:id="@+id/email_field_edit_text"
-        android:inputType="text"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
 
-    <EditText
-        android:id="@+id/password_field_edit_text"
-        android:inputType="textPassword"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+
+        app:layout_constraintTop_toBottomOf="@id/match_status_text_view">
+
+        <EditText
+            android:id="@+id/email_field_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_light"
+            android:hint="email address"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:layout_editor_absoluteX="2dp" />
+
+        <EditText
+            android:id="@+id/password_field_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="password"
+
+            android:inputType="textPassword"
+            android:fontFamily="@font/opensans_light"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email_field_edit_text" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/log_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+
+            android:background="@drawable/round_button"
+            android:fontFamily="@font/opensans_light"
+
             android:text="Log in" />
 
         <Button
             android:id="@+id/sign_up_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+
+            android:background="@drawable/round_button"
+
+            android:fontFamily="@font/opensans_light"
+            android:text="Sign up" />
+
+        <TextView
+            android:id="@+id/forgot_password_text_view"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:fontFamily="@font/opensans_light"
+            android:text="Forgot password" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/log_in_with_facebook_button"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign up" />
+            android:text="Log in with Facebook" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/forgot_password_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Forgot password"
-        android:clickable="true" />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/log_in_with_facebook_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Log in with Facebook" />
 
 </LinearLayout>
