@@ -19,13 +19,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
-<<<<<<< HEAD
-=======
 import edu.duke.compsci290.ridermaster.Activities.HistoryActivity;
 import edu.duke.compsci290.ridermaster.Activities.MatchResultActivity;
 import edu.duke.compsci290.ridermaster.Activities.RideRequestActivity;
 
->>>>>>> dcc6a0190b45debf707df3fc9dde30b2763bd3be
 /**
  * Created by mercyfang on 4/10/18.
  */
@@ -306,8 +303,6 @@ public class FirebaseDatabaseReaderWriter {
             }
         });
     }
-<<<<<<< HEAD
-=======
 
     public void matchNotification(String requestId){
         DatabaseReference curRef = root.child("requests").child(requestId);
@@ -440,9 +435,4 @@ public class FirebaseDatabaseReaderWriter {
 
 
 
-
-
-
-
->>>>>>> dcc6a0190b45debf707df3fc9dde30b2763bd3be
 }
