@@ -128,20 +128,22 @@ public class FirebaseDatabaseReaderWriter {
 
 
     private void readUserEmailAndUpdateMatchResultActivity(String uId) {
-//        final DatabaseReference usersRef = root.child("users").child(uId);
-//        final String[] userEmail = new String[1];
-//        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                userEmail[0] = (String) dataSnapshot.child("email").getValue();
-//                MatchResultActivity.updateStatusTextView(userEmail[0]);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.d(TAG, "Failed to read value.", databaseError.toException());
-//            }
-//        });
+        /*
+        final DatabaseReference usersRef = root.child("users").child(uId);
+        final String[] userEmail = new String[1];
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userEmail[0] = (String) dataSnapshot.child("email").getValue();
+                MatchResultActivity.updateStatusTextView(userEmail[0]);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Failed to read value.", databaseError.toException());
+            }
+        });
+        */
     }
 
     public void deleteUserAndRideRequest(String uid, String requestId){
